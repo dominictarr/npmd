@@ -1,0 +1,6 @@
+# npmd
+
+
+## License
+
+MIT
