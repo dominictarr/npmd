@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 var levelCouchSync = require('level-couch-sync')
 var pad = require('padded-semver').pad
 var Inverted = require('level-inverted-index')
