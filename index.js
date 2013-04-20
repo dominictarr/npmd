@@ -6,38 +6,60 @@ var Inverted = require('level-inverted-index')
 var MapReduce = require('map-reduce')
 
 var opts = require('optimist').argv
+var levelup = require('levelup')
+var sublevel = require('level-sublevel')
+var db = sublevel(levelup(process.env.HOME + '/.npmd', {encoding: 'json'}), '~')
 
-var db = require('level-sublevel')(require('levelup')(process.env.HOME + '/.npmd'), '~')
-var packageDb = db.sublevel('package')
-var versionDb = db.sublevel('version')
+var packageDb = db.sublevel('pkg')
+var versionDb = db.sublevel('ver-')
 
 levelCouchSync('http://isaacs.iriscouch.com/registry', db, 'registry-sync', 
   function (data, emit) {
     var doc = data.doc
 
     //don't allow keys with ~
+
+    if(doc._deleted) return
     if(/~/.test(data.id)) return
-    emit(data.id, JSON.stringify({
+
+//    console.log('DOC', doc.name)
+    if(!doc.name)
+      console.log(doc)
+
+    /*console.log({
+      name: !doc.name,
+      verson: !doc.versions,
+      maintainers: !doc.maintainers,
+      len: !doc.maintainers.length,
+      mname: !doc.maintainers[0].name
+    })*/
+
+    if(!doc.name || !doc.versions) return
+    if(!doc.maintainers || !doc.maintainers[0] || !doc.maintainers[0].name)
+      return
+
+    emit(data.id, {
       name        : doc.name,
       description : doc.keywords,
       readme      : doc.readme,
       keywords    : doc.keywords,
       author      : doc.author,
       licenses    : doc.licenses,
-      repository  : doc.repository
-    }), packageDb)
+      repository  : doc.repository,
+      maintainers : doc.maintainers
+    }, packageDb)
 
     //versions
     var vers = doc.versions
     for(var version in vers) {
       var ver = vers[version]
-      emit(data.id + '!!' + pad(version), JSON.stringify({
+      emit(data.id + '!!' + pad(version), {
         name: ver.name,
         version: ver.version,
         dependencies: ver.dependencies,
         devDependencies: ver.devDependencies,
         description: ver.description
-      }), versionDb)
+      }, versionDb)
     }
   })
   .on('progress', function (ratio) {
@@ -49,18 +71,15 @@ var indexDb =
 Inverted(packageDb, 'index', function (key, value, index) {
   if(!(i++ % 100))
     console.log(key)
-  value = JSON.parse(value)
   index(value.readme)
   index(value.name)
   index(value.author)
   index(value.keywords)
   index(value.description)
 }, function (value, query) {
-  value = JSON.parse(value)
   //todo query 
   return [
     '-----------------------------',
-//    '## ' + value.name,
     (value.readme ? value.readme.substring(0, 140) + '...' : value.description || value.name)
     .split('\n').map(function (e) {
       return '  ' + e
@@ -72,19 +91,18 @@ Inverted(packageDb, 'index', function (key, value, index) {
 
 //how many authors? how many modules?
 
-var authorsDb = MapReduce(packageDb, db.sublevel('authors'), function (key, value, emit) {
-  value = JSON.parse(value)
-  var author = value.author
-  author = author && author.name || author
-  console.log('author:', author, key)
-  if('string' === typeof author)
-    emit(author, 1)
+var authorsDb = db.sublevel('authors')
+
+MapReduce(packageDb, authorsDb, function (key, value, emit) {
+  if(!value.maintainers) return
+  console.log(value.maintainers[0].name, '/', key)
+  emit(value.maintainers[0].name, 1)
 }, function (acc, item) {
-  return Number(acc || 0) + Number(item || 0)
+  return Number(acc || 0) + (isNaN(item) ? 1 : Number(item))
 })
 
+/*
 var RepRed = require('level-repred')
-
 var rr = RepRed(packageDb, function (data) {
   return {count: data.value ? 1 : -1}
 },
@@ -96,6 +114,7 @@ function (acc, data, key) {
 rr.on('update', function (e) {
 //  console.log('COUNT', e)
 })
+*/
 
 if(opts._.length) {
   if(opts.query)
@@ -110,8 +129,18 @@ if(opts._.length) {
 if(opts.authors && opts.init) {
   authorsDb.start()
 }
+else if(opts.authors) {
+  var range = []
+  if(opts.authors == true)
+    range = [true]
+  else 
+    range = [opts.authors]
 
-if(opts.authors) {
-  authorsDb.createReadStream({range: [true], tail: true})
+  authorsDb.createReadStream({range: range, tail: opts.tail})
+  .on('data', console.log)
+}
+
+if(opts.count) {
+  authorsDb.createReadStream({range: [], tail: opts.tail})
   .on('data', console.log)
 }
