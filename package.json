@@ -10,10 +10,15 @@
   "dependencies": {
     "level-couch-sync": "~1.0.0",
     "optimist": "~0.3.5",
-    "level-sublevel": "~4.6.1",
-    "map-reduce": "~3.1.4",
+    "level-sublevel": "~4.6.2",
+    "map-reduce": "~3.1.5",
     "level-inverted-index": "~1.2.0",
-    "levelup": "~0.8.0"
+    "levelup": "~0.8.0",
+    "ecstatic": "~0.4.2",
+    "hyperscript": "~1.1.0",
+    "shoe": "0.0.10",
+    "reconnect": "~1.1.1",
+    "level-manifest": "~1.1.1"
   },
   "bin": "./index.js",
   "devDependencies": {},
