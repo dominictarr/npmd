@@ -9,7 +9,7 @@ var levelup        = require('levelup')
 var sublevel       = require('level-sublevel')
 var path           = require('path')
 
-module.exports = function (path) {
+module.exports = function (path, sync) {
   var db = (
     'string' === typeof path
     ? sublevel(levelup(path, {encoding: 'json'}), '~')
@@ -18,6 +18,7 @@ module.exports = function (path) {
   var packageDb = db.sublevel('pkg')
   var versionDb = db.sublevel('ver')
 
+  if(sync !== false)
   levelCouchSync('http://isaacs.iriscouch.com/registry', db, 'registry-sync', 
     function (data, emit) {
       var doc = data.doc
@@ -83,10 +84,22 @@ module.exports = function (path) {
     index(value.keywords)
     index(value.description)
   }, function (value, query) {
+    /*
+    var matches = []
+    
+    var matchers = 
+      query.map(function (str) {
+        return new RegExp('(?:\s|^)' + str.replace('~', '.*') + '(?:$|\s)')
+      })
+    
+    //return value.description
+    
+    value.readme.split('\n')
+    */
     return {
       name: value.name,
       maintainers: value.maintainers,
-      version: value.version,
+      //version: value.version,
       description: (function () {
         if(!value.readme)
           return value.description
