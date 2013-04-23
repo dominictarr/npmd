@@ -15,6 +15,12 @@ var opts    = require('optimist').argv
 
 //I've implemented the basic algorithm that npm uses,
 //and a greedy algorithm. the greedy algorithm
+//would every module into $PWD/node_modules
+//and only creates new node_modules directories
+//when the version range specified is not available.
+
+//testing with the trees for large projects, (such as npm and browserify)
+//this may require 10-30% fewer installs
 
 function resolve (db, module, vrange, cb) {
   var r = range(vrange || '*')
