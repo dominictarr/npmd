@@ -6,8 +6,9 @@ var multilevel = require('multilevel')
 var manifest   = require('level-manifest')
 var fs         = require('fs')
 var path       = require('path')
+var npmd       = require('./')
 
-var db         = require('./')(path.join(process.env.HOME, '.npmd'))
+var db         = npmd(path.join(process.env.HOME, '.npmd'))
 
 fs.writeFileSync('./manifest.json', JSON.stringify(manifest(db, true), null, 2))
 

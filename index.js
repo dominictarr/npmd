@@ -17,6 +17,7 @@ module.exports = function (path, sync) {
   )
   var packageDb = db.sublevel('pkg')
   var versionDb = db.sublevel('ver')
+  var lastPercentage = 0
 
   if(sync !== false)
   levelCouchSync('http://isaacs.iriscouch.com/registry', db, 'registry-sync', 
@@ -69,7 +70,11 @@ module.exports = function (path, sync) {
       }
     })
     .on('progress', function (ratio) {
-      console.log(Math.floor(ratio*10000)/100)
+      var percentage = Math.floor(ratio*10000)/100
+      if (percentage > lastPercentage) {
+        console.log(percentage)
+        lastPercentage = percentage
+      }
     })
 
   var i = 0
