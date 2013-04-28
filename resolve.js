@@ -5,7 +5,7 @@ var pull    = require('pull-stream')
 var inspect = require('util').inspect
 var semver  = require('semver')
 var opts    = require('optimist').argv
-
+var cat     = require('pull-cat')
 //experimenting with different installation resolve
 //algs. the idea is to traverse the tree locally,
 //figure out what is needed, and then install from
@@ -25,9 +25,10 @@ var opts    = require('optimist').argv
 function resolve (db, module, vrange, cb) {
   var r = range(vrange || '*')
   r = {
-    min: module + '!!'+(r.start || ''),
-    max: module + '!!'+(r.end || '~'),
+    min: module + '!'+(r.start || ''),
+    max: module + '!'+(r.end || '~'),
   }
+
   peek.last(db, r, function (err, key, pkg) {
     if(!semver.satisfies(pkg.version, vrange))
       return cb(new Error(module+'@'+pkg.version +'><'+ vrange))
@@ -43,44 +44,48 @@ function check(pkg, name, range) {
   return check(pkg.parent, name, range)
 }
 
-function traverse (db, module, version) {
+function traverse (db, module, version, cb) {
   resolve(db, module, version, function (err, pkg) {
     pkg.indent = '-'
-    pull.depthFirst(pkg, function (pkg) {
-      var deps = pkg.dependencies || {}
-      pkg.tree = {}
-      return pull.values(Object.keys(deps))
-        .pipe(pull.asyncMap(function (name, cb) {
-          //check if there is already a module that resolves this...
+    cat([pull.values([pkg]),
+      pull.depthFirst(pkg, function (pkg) {
+        var deps = pkg.dependencies || {}
+        pkg.tree = {}
+        return pull.values(Object.keys(deps))
+          .pipe(pull.asyncMap(function (name, cb) {
+            //check if there is already a module that resolves this...
 
-          //filter out versions that we already have.
-          if(check(pkg, name, deps[name]))
-            return cb()
+            //filter out versions that we already have.
+            if(check(pkg, name, deps[name]))
+              return cb()
 
-          resolve(db, name, deps[name], cb)
-        }))
+            resolve(db, name, deps[name], cb)
+          }, 10))
     
-        .pipe(pull.filter(function (_pkg) {
-          if(!_pkg) return
-          _pkg.parent = pkg
-          _pkg.indent = '-' + pkg.indent
-          pkg.tree[_pkg.name] = _pkg
-          return pkg
-        }))
-    })
+          .pipe(pull.filter(function (_pkg) {
+            if(!_pkg) return
+            _pkg.parent = pkg
+            _pkg.indent = '-' + pkg.indent
+            pkg.tree[_pkg.name] = _pkg
+            return pkg
+          }))
+      })]
+    )
     .pipe(pull.drain(function (pkg) {
       console.log('install', pkg.indent, pkg.name, pkg.version)
     }, function () {
+      cb(null, pkg)
   //    console.log(inspect(pkg, null, 100))
     }))
   })
 }
 
-function traverse2 (db, module, version) {
+function traverse2 (db, module, version, cb) {
   resolve(db, module, version, function (err, pkg) {
     var root = pkg
     pkg.indent = '-'
  
+    cat([pull.values([pkg]),
     pull.depthFirst(pkg, function (pkg) {
       var deps = pkg.dependencies || {}
       pkg.tree = {}
@@ -112,23 +117,45 @@ function traverse2 (db, module, version) {
           }
           return pkg
         }))
-    })
+    })])
     .pipe(pull.drain(function (pkg) {
       console.log('install', pkg.indent, pkg.name, pkg.version)
     }, function () {
+      cb(null, pkg)
   //    console.log(inspect(pkg, null, 100))
     }))
   })
 }
 
 if(!module.parent) {
-  var db = require('./index')(path.join(process.env.HOME, '.npmd'), false)
+  var db = require('level-sublevel')
+    (require('levelup')(path.join(process.env.HOME, '.npmd'), {encoding: 'json'}))
+
+  require('./index')(db)
+//  console.log(db)
   var versions = db.sublevel('ver')
-  console.log(opts)
-  if(opts.greedy)
-    traverse2(versions, opts._[0] || 'npmd', opts._[1])
-  else
-    traverse(versions, opts._[0] || 'npmd', opts._[1])
+//    .createReadStream({}).on('data', console.log)
 
+  var parts = (opts._[0] || 'npmd').split('@')
+  var name = parts.shift()
+  var version = parts.pop()
 
+    console.log(name, version)
+
+  var i = 10
+  ;(function loop () {
+    var start = Date.now()
+    if(opts.greedy)
+      traverse2(versions, name, version, done)
+    else
+      traverse(versions, name, version, done)
+
+    function done(){ 
+      var end = Date.now()
+      console.log(end - start)
+      if(--i) loop()
+    }
+
+  })()
+//*/
 }
