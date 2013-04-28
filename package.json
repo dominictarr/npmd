@@ -10,7 +10,7 @@
   "dependencies": {
     "level-couch-sync": "~1.0.0",
     "optimist": "~0.3.5",
-    "level-sublevel": "~4.6.3",
+    "level-sublevel": "~4.6.4",
     "map-reduce": "~3.1.5",
     "level-inverted-index": "~1.2.0",
     "levelup": "~0.8.0",
@@ -22,7 +22,10 @@
     "semver": "~1.1.4",
     "multilevel": "~3.0.0",
     "padded-semver": "~1.1.1",
-    "rc": "~0.1.3"
+    "rc": "~0.1.3",
+    "pull-cat": "~1.1.1",
+    "level-peek": "~1.0.6",
+    "pull-stream": "~2.15.0"
   },
   "bin": "./index.js",
   "devDependencies": {},
