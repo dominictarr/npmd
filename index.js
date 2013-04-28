@@ -12,15 +12,12 @@ var config = require('rc')('npmd', {
   path: path.join(process.env.HOME, '.npmd'),
   debug: true,
   sync: false,
+  encoding: 'json',
   registry: 'http://isaacs.iriscouch.com/registry'
 })
 
-module.exports = function (path, sync) {
-  var db = (
-    'string' === typeof path
-    ? sublevel(levelup(path, {encoding: 'json'}), '~')
-    : path //allow user to inject db
-  )
+module.exports = function (db) {
+
   var packageDb = db.sublevel('pkg')
   var versionDb = db.sublevel('ver')
 
@@ -32,7 +29,9 @@ module.exports = function (path, sync) {
 }
 
 if(!module.parent) {
-  var db = module.exports(path.join(process.env.HOME, '.npmd'))
+  var db = sublevel(levelup(config.path, config))
+
+  module.exports(db)
 
   if(opts._.length) {
     if(opts.query)
@@ -61,6 +60,11 @@ if(!module.parent) {
   if(opts.count) {
     db.sublevel('authors').createReadStream({range: [], tail: opts.tail})
     .on('data', console.log)
+  }
+
+  if(opts.ls) {
+    db.sublevel('ver').createReadStream({min: opts.ls+'!', max:opts.ls+'!~'})
+      .on('data', console.log)
   }
 }
 
