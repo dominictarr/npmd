@@ -1,5 +1,9 @@
 {
-  "methods": {},
+  "methods": {
+    "resolve": {
+      "type": "async"
+    }
+  },
   "sublevels": {
     "pkg": {
       "methods": {},

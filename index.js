@@ -26,7 +26,8 @@ var config = require('./config')
 var plugins = [
   require('./plugins/couch-sync'),
   require('./plugins/inverted-index'),
-  require('./plugins/authors')
+  require('./plugins/authors'),
+  require('./plugins/resolve')
 ]
 
 function addDb (db, config) {

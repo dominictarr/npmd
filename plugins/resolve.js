@@ -26,8 +26,35 @@ var cat     = require('pull-cat')
 //like 2 seconds to resolve browserify (50 modules)
 //but when the cache is warm it's only 50 ms!
 
+exports.db = function (db, config) {
+  db.methods.resolve = {type: 'async'}
+  db.resolve = function (module, vrange, cb) {
+    resolveTree(db.sublevel('ver'), module, vrange, cb)
+  }
+}
+exports.commands = function (db) {
+  db.commands.resolve = function (config, cb) {
+    db.resolve(config._[0], config._[1] || '*', function (err, tree) {
+      if(err) return cb(err)
+      console.log(JSON.stringify(tree, null, 2))
+      cb()
+    })
+  }
+
+}
+
 function resolve (db, module, vrange, cb) {
+  if(!cb) cb = vrange, vrange = '*'
+
+  if(/^(git|http)/.test(vrange))
+    return cb(null, {
+      name: module,
+      verson: '?.?.?',
+      repo: vrange
+    })
+
   var r = range(vrange || '*')
+
   r = {
     min: module + '!'+(r.start || ''),
     max: module + '!'+(r.end || '~'),
@@ -36,7 +63,6 @@ function resolve (db, module, vrange, cb) {
   peek.last(db, r, function (err, key, pkg) {
     if(!semver.satisfies(pkg.version, vrange))
       return cb(new Error(module+'@'+pkg.version +'><'+ vrange))
-    //console.log(module+'@'+vrange, '==>', pkg.version)
     cb(err, pkg)
   })
 }
@@ -48,7 +74,33 @@ function check(pkg, name, range) {
   return check(pkg.parent, name, range)
 }
 
-function traverse (db, module, version, cb) {
+function clean (t) {
+  var deps = t.dependencies
+  var _deps = t.tree || {}
+
+  delete t.tree
+  delete t._parent
+  delete t.description
+  delete t.devDependencies
+  delete t.tree
+  delete t.scripts
+  delete t.parent
+  delete t.time
+  delete t.size
+
+  for(var k in _deps) {
+    _deps[k].from = deps[k]
+    clean(_deps[k])
+  }
+
+  t.dependencies = _deps
+
+  return t
+}
+
+var resolveTree = 
+exports.resolveTree = 
+function (db, module, version, cb) {
   resolve(db, module, version, function (err, pkg) {
     cat([pull.values([pkg]),
       pull.depthFirst(pkg, function (pkg) {
@@ -68,19 +120,20 @@ function traverse (db, module, version, cb) {
           .pipe(pull.filter(function (_pkg) {
             if(!_pkg) return
             _pkg.parent = pkg
-            _pkg.indent = '-' + pkg.indent
             pkg.tree[_pkg.name] = _pkg
             return pkg
           }))
       })]
     )
     .pipe(pull.drain(null, function () {
-      cb(null, pkg)
+      cb(null, clean(pkg))
     }))
   })
 }
 
-function traverse2 (db, module, version, cb) {
+var resolveTree2 = 
+exports.resolveTree2 = 
+function (db, module, version, cb) {
   resolve(db, module, version, function (err, pkg) {
     var root = pkg
  
@@ -120,11 +173,12 @@ function traverse2 (db, module, version, cb) {
         }))
     })])
     .pipe(pull.drain(null, function () {
-      cb(null, pkg)
+      cb(null, clean(pkg))
     }))
   })
 }
 
+/*
 if(!module.parent) {
   var db = require('level-sublevel')
     (require('levelup')(path.join(process.env.HOME, '.npmd'), {encoding: 'json'}))
@@ -139,37 +193,15 @@ if(!module.parent) {
 
     var start = Date.now()
     if(opts.greedy)
-      traverse2(versions, name, version, done)
+      resolveTree2(versions, name, version, done)
     else
-      traverse(versions, name, version, done)
+      resolveTree(versions, name, version, done)
 
     function done(_, tree){ 
       var end = Date.now()
-      console.error(end - start)
-
       //turn the tree into npm-snapshot.json format!
-      ;(function clean (t) {
-        var deps = t.dependencies
-        var _deps = t.tree
-        t.dependencies = t.tree || {}
-
-        delete t.tree
-        delete t._parent
-        delete t.description
-        delete t.devDependencies
-        delete t.tree
-        delete t.scripts
-        delete t.parent
-        delete t.time
-        delete t.size
-        for(var k in t.dependencies) {
-          t.dependencies[k].from = deps[k]
-          clean(t.dependencies[k])
-        }
-      })(tree)
-
       console.log(JSON.stringify(tree, null, 2))
     }
 
-//*/
 }
+*/
