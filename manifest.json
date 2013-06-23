@@ -1,15 +1,12 @@
 {
   "methods": {},
-  "_sep": "~",
   "sublevels": {
     "pkg": {
       "methods": {},
-      "_sep": "~",
       "_prefix": "pkg",
       "sublevels": {
         "maps": {
           "methods": {},
-          "_sep": "~",
           "_prefix": "maps",
           "sublevels": {}
         }
@@ -17,13 +14,11 @@
     },
     "ver": {
       "methods": {},
-      "_sep": "~",
       "_prefix": "ver",
       "sublevels": {}
     },
     "registry-sync": {
       "methods": {},
-      "_sep": "~",
       "_prefix": "registry-sync",
       "sublevels": {}
     },
@@ -36,12 +31,10 @@
           "type": "readable"
         }
       },
-      "_sep": "~",
       "_prefix": "index",
       "sublevels": {
         "mapped": {
           "methods": {},
-          "_sep": "~",
           "_prefix": "mapped",
           "sublevels": {}
         }
@@ -49,18 +42,15 @@
     },
     "authors": {
       "methods": {},
-      "_sep": "~",
       "_prefix": "authors",
       "sublevels": {
         "mapped": {
           "methods": {},
-          "_sep": "~",
           "_prefix": "mapped",
           "sublevels": {}
         },
         "reduces": {
           "methods": {},
-          "_sep": "~",
           "_prefix": "reduces",
           "sublevels": {}
         }

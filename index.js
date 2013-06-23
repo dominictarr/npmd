@@ -1,70 +1,100 @@
 #!/usr/bin/env node
 
-var MapReduce      = require('map-reduce')
+var fs         = require('fs')
+var autonode   = require('autonode')
+var multilevel = require('multilevel')
+var levelup    = require('level')
+var sublevel   = require('level-sublevel')
 
-var opts           = require('optimist').argv
-var levelup        = require('levelup')
-var sublevel       = require('level-sublevel')
+var path       = require('path')
 
-var path           = require('path')
+//memwatch.on('stats', console.error)
 
-var config = require('rc')('npmd', {
-  path: path.join(process.env.HOME, '.npmd'),
-  debug: true,
-  sync: false,
-  encoding: 'json',
-  registry: 'http://isaacs.iriscouch.com/registry'
-})
+var config = require('./config')
 
-module.exports = function (db) {
-
-  var packageDb = db.sublevel('pkg')
-  var versionDb = db.sublevel('ver')
-
-  require('./plugins/couch-sync')     (db, config)
-  require('./plugins/inverted-index') (db, config)
-  require('./plugins/authors')        (db, config)
-
+function createDb (db) {
+  if(!db) db = sublevel(levelup(config.path, config))
   return db
 }
 
-if(!module.parent) {
-  var db = sublevel(levelup(config.path, config))
+var Manifest = require('level-manifest')
 
-  module.exports(db)
+var db, manifest = require('./manifest.json')
 
-  if(opts._.length) {
-    if(opts.query)
-      return db.sublevel('index').query(opts._)
-        .on('data', console.log)
-    db.sublevel('index').createQueryStream(opts._)
-      .on('data', console.log)
-  }
+var config = require('./config')
 
+var plugins = [
+  require('./plugins/couch-sync'),
+  require('./plugins/inverted-index'),
+  require('./plugins/authors')
+]
 
-  if(opts.authors && opts.init) {
-    db.sublevel('authors').start()
-  }
+function addDb (db, config) {
+  db.config = config
+  db.commands = db.commands || {}
+  plugins.forEach(function (e) {
+    if('function' === typeof e)
+      e(db, config)
+    else if('function' === typeof e.db)
+      e.db(db, config)
+  })
 
-  else if(opts.authors) {
-    var range = []
-    if(opts.authors == true)
-      range = [true]
-    else 
-      range = [opts.authors]
-
-    db.sublevel('authors').createReadStream({range: range, tail: opts.tail})
-    .on('data', console.log)
-  }
-
-  if(opts.count) {
-    db.sublevel('authors').createReadStream({range: [], tail: opts.tail})
-    .on('data', console.log)
-  }
-
-  if(opts.ls) {
-    db.sublevel('ver').createReadStream({min: opts.ls+'!', max:opts.ls+'!~'})
-      .on('data', console.log)
-  }
+  plugins.forEach(function (e) {
+    if(e.commands)
+      e.commands(db)
+  })
 }
+
+function addCommands(db) {
+  db.commands = {}
+  plugins.forEach(function (e) {
+    if(e.commands)
+      e.commands(db)
+  })
+}
+
+function execCommands (db, config) {
+  if(!config._.length)
+    return
+
+  var command = config._.shift()
+
+  if(db.commands[command])
+    db.commands[command](config, function (err) {
+      if(err) throw err
+      server.close()
+    })
+}
+
+server = autonode(function (stream) {
+  var dbStream = this.isServer
+    ? multilevel.server(db)
+    : multilevel.client(manifest)
+
+  stream.pipe(dbStream).pipe(stream)
+  stream.on('error', function () {console.error('disconnected')})
+
+  if(this.isClient) {
+    //process commands.
+    addCommands(dbStream)
+    execCommands(dbStream, config)
+  }
+
+})
+.listen(config.port)
+.on('listening', function () {
+  db = createDb()
+  //attach all plugins.
+  //process any commands.
+  addDb(db, config)
+
+  var manifest = Manifest(db, true)
+  fs.writeFileSync(
+    __dirname+'/manifest.json',
+    JSON.stringify(manifest, null, 2)
+  )
+
+  addCommands(db)
+  execCommands(db, config)
+})
 

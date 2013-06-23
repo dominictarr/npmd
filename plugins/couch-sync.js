@@ -1,7 +1,7 @@
 var levelCouchSync = require('level-couch-sync')
 var pad            = require('padded-semver').pad
 
-module.exports = function (db, config) {
+exports.db = function (db, config) {
   var packageDb = db.sublevel('pkg')
   var versionDb = db.sublevel('ver')
 
@@ -14,8 +14,6 @@ module.exports = function (db, config) {
   var lastPercentage = 0
   var registrySync
   if(config.sync !== false) {
-
-
 
     registrySync = 
     levelCouchSync(config.registry, db, 'registry-sync', 

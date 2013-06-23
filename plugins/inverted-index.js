@@ -1,7 +1,8 @@
 
-var Inverted       = require('level-inverted-index')
+var Inverted = require('level-inverted-index')
+var through  = require('through')
 
-module.exports = function (db, config) {
+exports.db = function (db, config) {
   var packageDb = db.sublevel('pkg')
   var indexDb = db.sublevel('index')
 
@@ -51,4 +52,21 @@ module.exports = function (db, config) {
       }).join('\n')
     ].join('\n')
   })
+}
+
+exports.commands = function (db) {
+  db.commands.search = function (config, cb) {
+
+  if(!config._.length)
+    return cb(new Error('expects search term'))
+
+  db.sublevel('index')
+    .createQueryStream(config._)
+    .pipe(through(function (data) {
+      this.queue(data.key + '\n')
+    }))
+    .on('end', cb)
+    .pipe(process.stdout)
+  }
+
 }
