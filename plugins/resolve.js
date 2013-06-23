@@ -28,13 +28,20 @@ var cat     = require('pull-cat')
 
 exports.db = function (db, config) {
   db.methods.resolve = {type: 'async'}
-  db.resolve = function (module, vrange, cb) {
-    resolveTree(db.sublevel('ver'), module, vrange, cb)
+  db.resolve = function (module, vrange, opts, cb) {
+    if(!cb)
+      cb = opts, opts = {}
+    if(opts.greedy)
+      resolveTree2(db.sublevel('ver'), module, vrange, cb)
+    else
+      resolveTree(db.sublevel('ver'), module, vrange, cb)
   }
 }
 exports.commands = function (db) {
   db.commands.resolve = function (config, cb) {
-    db.resolve(config._[0], config._[1] || '*', function (err, tree) {
+    db.resolve(config._[0], config._[1] || '*',
+    {greedy: config.greedy}, 
+    function (err, tree) {
       if(err) return cb(err)
       console.log(JSON.stringify(tree, null, 2))
       cb()
@@ -178,30 +185,3 @@ function (db, module, version, cb) {
   })
 }
 
-/*
-if(!module.parent) {
-  var db = require('level-sublevel')
-    (require('levelup')(path.join(process.env.HOME, '.npmd'), {encoding: 'json'}))
-
-  require('./index')(db)
-
-  var versions = db.sublevel('ver')
-
-  var parts = (opts._[0] || 'npmd').split('@')
-  var name = parts.shift()
-  var version = parts.pop()
-
-    var start = Date.now()
-    if(opts.greedy)
-      resolveTree2(versions, name, version, done)
-    else
-      resolveTree(versions, name, version, done)
-
-    function done(_, tree){ 
-      var end = Date.now()
-      //turn the tree into npm-snapshot.json format!
-      console.log(JSON.stringify(tree, null, 2))
-    }
-
-}
-*/
