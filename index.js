@@ -27,7 +27,8 @@ var plugins = [
   require('./plugins/couch-sync'),
   require('./plugins/inverted-index'),
   require('./plugins/authors'),
-  require('npmd-resolve')
+  require('npmd-resolve'),
+  require('npmd-install')
 ]
 
 function addDb (db, config) {
@@ -55,16 +56,20 @@ function addCommands(db) {
 }
 
 function execCommands (db, config) {
+  var called = false
   if(!config._.length)
     return
 
   var command = config._.shift()
 
-  if(db.commands[command])
+  if(db.commands[command]) {
+    called = true
     db.commands[command](config, function (err) {
       if(err) throw err
       server.close()
     })
+  }
+  return called
 }
 
 server = autonode(function (stream) {
@@ -78,7 +83,11 @@ server = autonode(function (stream) {
   if(this.isClient) {
     //process commands.
     addCommands(dbStream)
-    execCommands(dbStream, config)
+    if(!execCommands(dbStream, config)) {
+      this.close()
+      stream.end()
+      console.error('USAGE: npmd install module@version')
+    }
   }
 
 })
@@ -95,7 +104,6 @@ server = autonode(function (stream) {
     JSON.stringify(manifest, null, 2)
   )
 
-  addCommands(db)
   execCommands(db, config)
 })
 
