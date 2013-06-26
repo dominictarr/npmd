@@ -27,17 +27,17 @@ var plugins = [
   require('./plugins/couch-sync'),
   require('./plugins/inverted-index'),
   require('./plugins/authors'),
-  require('./plugins/resolve')
+  require('npmd-resolve')
 ]
 
 function addDb (db, config) {
   db.config = config
   db.commands = db.commands || {}
   plugins.forEach(function (e) {
-    if('function' === typeof e)
-      e(db, config)
-    else if('function' === typeof e.db)
+    if('function' === typeof e.db)
       e.db(db, config)
+    else if('function' === typeof e)
+      e(db, config)
   })
 
   plugins.forEach(function (e) {
