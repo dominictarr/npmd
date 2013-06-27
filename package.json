@@ -1,6 +1,6 @@
 {
   "name": "npmd",
-  "description": "track the npm registry and stick it into leveldo [WIP]",
+  "description": "distributed npm client",
   "version": "0.2.0",
   "homepage": "https://github.com/dominictarr/npmd",
   "repository": {
