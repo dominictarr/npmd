@@ -1,27 +1,24 @@
 #!/usr/bin/env node
 
 var fs         = require('fs')
+var path       = require('path')
+
 var autonode   = require('autonode')
 var multilevel = require('multilevel')
 var levelup    = require('level')
 var sublevel   = require('level-sublevel')
+var Manifest   = require('level-manifest')
 
-var path       = require('path')
+var config     = require('./config')
+var manifest   = require('./manifest.json')
+var config     = require('./config')
 
-//memwatch.on('stats', console.error)
-
-var config = require('./config')
+var db
 
 function createDb (db) {
   if(!db) db = sublevel(levelup(config.path, config))
   return db
 }
-
-var Manifest = require('level-manifest')
-
-var db, manifest = require('./manifest.json')
-
-var config = require('./config')
 
 var plugins = [
   require('./plugins/couch-sync'),
@@ -31,22 +28,6 @@ var plugins = [
   require('npmd-install')
 ]
 
-function addDb (db, config) {
-  db.config = config
-  db.commands = db.commands || {}
-  plugins.forEach(function (e) {
-    if('function' === typeof e.db)
-      e.db(db, config)
-    else if('function' === typeof e)
-      e(db, config)
-  })
-
-  plugins.forEach(function (e) {
-    if(e.commands)
-      e.commands(db)
-  })
-}
-
 function addCommands(db) {
   db.commands = {}
   plugins.forEach(function (e) {
@@ -55,21 +36,38 @@ function addCommands(db) {
   })
 }
 
-function execCommands (db, config) {
+function addDb (db, config) {
+  db.config = config
+  plugins.forEach(function (e) {
+    if('function' === typeof e.db)
+      e.db(db, config)
+    else if('function' === typeof e)
+      e(db, config)
+  })
+}
+
+//TODO: make a middleware like thing but with
+//cli commands.
+
+function execCommands (db, config, cb) {
   var called = false
   if(!config._.length)
-    return
+    return cb(null, false)
 
   var command = config._.shift()
-
   if(db.commands[command]) {
     called = true
-    db.commands[command](config, function (err) {
-      if(err) throw err
-      server.close()
-    })
+    return db.commands[command](config, cb)
   }
-  return called
+  cb(null, false)
+}
+
+function printHelp () {
+  fs.createReadStream(__dirname + '/README.md')
+  .on('close', function () {
+    process.exit()
+  })
+  .pipe(process.stdout)
 }
 
 server = autonode(function (stream) {
@@ -79,17 +77,17 @@ server = autonode(function (stream) {
 
   stream.pipe(dbStream).pipe(stream)
   stream.on('error', function () {console.error('disconnected')})
-
+  
   if(this.isClient) {
     //process commands.
     addCommands(dbStream)
-    if(!execCommands(dbStream, config)) {
-      this.close()
-      stream.end()
-      console.error('USAGE: npmd install module@version')
-    }
+    execCommands(dbStream, config, function (err, did) {
+      if(err) throw err
+      server.close(); stream.end()
+      if(did === false)
+        printHelp()
+    })
   }
-
 })
 .listen(config.port)
 .on('listening', function () {
@@ -97,13 +95,18 @@ server = autonode(function (stream) {
   //attach all plugins.
   //process any commands.
   addDb(db, config)
+  addCommands(db, config)
 
   var manifest = Manifest(db, true)
+
   fs.writeFileSync(
     __dirname+'/manifest.json',
     JSON.stringify(manifest, null, 2)
   )
-
-  execCommands(db, config)
+  execCommands(db, config, function (err, data) {
+    if(err) throw err
+    if(!config.sync)
+      printHelp(data)
+  })
 })
 
