@@ -70,7 +70,8 @@ exports.db = function (db, config) {
               description     : ver.description,
               size            : doc._attachments[tgz].length,
               time            : doc.time ? doc.time[version] : yearZero,
-              shasum          : ver.dist.shasum
+              shasum          : ver.dist.shasum,
+              gypfile         : ver.gypfile
             }, versionDb)
 
         }
