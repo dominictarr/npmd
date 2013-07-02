@@ -25,7 +25,7 @@
     "level-sublevel"      : "~4.7.0",
     "level"               : "~0.10.0",
     "npmd-resolve"        : ">=2.1.1 <3",
-    "npmd-install"        : ">=3.0.0 <4.0",
+    "npmd-install"        : ">=3.0.1 <4.0",
     "npmconf"             : ">=0.1.1 <0.2",
     "npmd-tree"           : ">=1.0.1 <2"
   },
