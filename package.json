@@ -1,7 +1,7 @@
 {
   "name": "npmd",
   "description": "distributed npm client",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "homepage": "https://github.com/dominictarr/npmd",
   "repository": {
     "type": "git",
