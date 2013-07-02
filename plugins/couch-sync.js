@@ -100,12 +100,11 @@ exports.cli = function (db) {
     if(config.verbose)
       db.sublevel('pkg').post(function (op) {
         var pkg = JSON.parse(op.value)
-        console.log(pkg)
 
         var maintainers = pkg.maintainers.map(function (e) {
           return e.name
-        })
-        console.log(pkg.name, pkg.maintainers, pkg.time.modified)
+        }).join(', ')
+        console.log(pkg.name, maintainers, pkg.time.modified)
         if(pkg.description)
           console.log(pkg.description)
       })
