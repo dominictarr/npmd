@@ -92,3 +92,24 @@ exports.db = function (db, config) {
       }
     })
 }
+
+exports.cli = function (db) {
+  db.cli.push(function (db, config, cb) {
+    if(!config.sync) return
+
+    if(config.verbose)
+      db.sublevel('pkg').post(function (op) {
+        var pkg = JSON.parse(op.value)
+        console.log(pkg)
+
+        var maintainers = pkg.maintainers.map(function (e) {
+          return e.name
+        })
+        console.log(pkg.name, pkg.maintainers, pkg.time.modified)
+        if(pkg.description)
+          console.log(pkg.description)
+      })
+
+    return true
+  })
+}

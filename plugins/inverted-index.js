@@ -9,8 +9,6 @@ exports.db = function (db, config) {
   var i = 0
 
   Inverted(packageDb, indexDb, function (key, value, index) {
-    if(!(i++ % 100))
-      console.error(key)
     index(value.readme)
     index(value.name)
     index(value.author)
@@ -55,18 +53,23 @@ exports.db = function (db, config) {
 }
 
 exports.commands = function (db) {
-  db.commands.search = function (config, cb) {
+  db.commands.push(function (db, config, cb) {
+  var args = config._.slice()
+  if(args.shift() != 'search')
+    return
 
-  if(!config._.length)
+  if(!args.length)
     return cb(new Error('expects search term'))
 
   db.sublevel('index')
-    .createQueryStream(config._)
+    .createQueryStream(args)
     .pipe(through(function (data) {
       this.queue(data.key + '\n')
     }))
     .on('end', cb)
     .pipe(process.stdout)
-  }
+
+    return true
+  })
 
 }

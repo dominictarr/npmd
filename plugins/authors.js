@@ -13,17 +13,17 @@ module.exports = {
     }, function (acc, item) {
       return Number(acc || 0) + (isNaN(item) ? 1 : Number(item))
     })
-
   },
-  commands: function (db) {
-    db.commands.authors = function (config, cb) { 
-     if(config.init)
-        return authorsDb.start()
-      var range = []
-      if(!config._.length)
-        range = [true]
-      else 
-        range = [config._[0]]
+  commands: function (db, config) {
+    db.commands.push(function (db, config, cb) { 
+      var args = config._.slice()
+      if(args.shift() !== 'authors')
+        return
+
+      if(config.init)
+        return authorsDb.start(cb)
+
+      var range = [args.shift() || true]
 
       db.sublevel('authors').createReadStream({range: range, tail: config.tail})
       .pipe(through(function (data) {
@@ -33,6 +33,6 @@ module.exports = {
           cb()
       })
       .pipe(process.stdout)
-    }
+    })
   }
 }
