@@ -32,6 +32,7 @@ npmconf.load({}, function (err, conf) {
     require('./plugins/authors'),
     require('npmd-resolve'),
     require('npmd-install')(config),
+    require('./plugins/versions'),
     {commands: function (db) {
       db.commands.push(function (db, config, cb) {
           fs.createReadStream(__dirname + '/README.md')
@@ -91,6 +92,7 @@ npmconf.load({}, function (err, conf) {
   .listen(config.port)
   .on('listening', function () {
     db = createDb()
+
     //attach all plugins.
     //process any commands.
     addDb(db, config)
