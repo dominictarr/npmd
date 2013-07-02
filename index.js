@@ -82,7 +82,8 @@ npmconf.load({}, function (err, conf) {
     if(this.isClient) {
       //process commands.
       addCommands(dbStream)
-      execCommands(dbStream, config, function (err, did) {
+      execCommands(dbStream, config, function (err) {
+        if(err) throw err
         server.close(); stream.end()
       })
     }
