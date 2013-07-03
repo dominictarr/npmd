@@ -100,10 +100,12 @@ npmconf.load({}, function (err, conf) {
 
     var manifest = Manifest(db, true)
 
-    fs.writeFileSync(
-      __dirname+'/manifest.json',
-      JSON.stringify(manifest, null, 2)
-    )
+    if(config.manifest)
+      fs.writeFileSync(
+        __dirname+'/manifest.json',
+        JSON.stringify(manifest, null, 2)
+      )
+
     execCommands(db, config, function (err, data) {
       if(err) throw err
       process.exit()
