@@ -2,7 +2,6 @@ var levelCouchSync = require('level-couch-sync')
 var pad            = require('padded-semver').pad
 
 exports.db = function (db, config) {
-  console.log(db._prefix)
   var packageDb = db.sublevel('pkg')
   var versionDb = db.sublevel('ver')
 
