@@ -2,6 +2,9 @@
   "methods": {
     "resolve": {
       "type": "async"
+    },
+    "lResolve": {
+      "type": "async"
     }
   },
   "sublevels": {

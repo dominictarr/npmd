@@ -9,8 +9,8 @@
   },
   "dependencies": {
     "level-couch-sync": "~1.0.0",
-    "map-reduce": "~3.1.5",
-    "level-inverted-index": "~1.2.5",
+    "map-reduce": "4.0",
+    "level-inverted-index": "~1.2.6",
     "ecstatic": "~0.4.2",
     "level-manifest": "~1.1.1",
     "semver": "~1.1.4",
@@ -21,10 +21,11 @@
     "through": "~2.3.4",
     "level-sublevel": "~4.7.0",
     "level": "~0.10.0",
-    "npmd-resolve": ">=2.1.1 <3",
+    "npmd-resolve": ">=3.0.0 <4",
     "npmd-install": ">=3.0.1 <4.0",
     "npmconf": ">=0.1.1 <0.2",
-    "npmd-tree": ">=1.0.1 <2"
+    "npmd-tree": ">=2.0.0 <3",
+    "npmd-link": "1.0"
   },
   "bin": "./index.js",
   "devDependencies": {

@@ -17,6 +17,7 @@ var manifest   = require('./manifest.json')
 
 //pull npmconf, so know where to install global modules.
 npmconf.load({}, function (err, conf) {
+
   var config = getConf(conf)
 
   var db
@@ -31,6 +32,8 @@ npmconf.load({}, function (err, conf) {
     require('./plugins/inverted-index'),
     require('./plugins/authors'),
     require('npmd-resolve'),
+    require('npmd-tree'),
+    require('npmd-link'),
     require('npmd-install')(config),
     require('./plugins/versions'),
     {commands: function (db) {
@@ -70,7 +73,6 @@ npmconf.load({}, function (err, conf) {
     if(!commands(db.commands) (db, config, cb))
       cb(new Error('unknown command'))
   }
-
 
   server = autonode(function (stream) {
     var dbStream = this.isServer
