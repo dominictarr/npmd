@@ -1,6 +1,6 @@
 # npmd
 
-disributed npm client.
+distributed npm client.
 
 ## synposis
 
