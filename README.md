@@ -15,6 +15,7 @@ and enables all manner of Mad Science.
 
 To begin, replicate the registry metadata. When this gets near 100%
 you can use the other commands.
+
 ```
 npm install npmd -g
 npmd --sync
@@ -22,6 +23,9 @@ npmd --sync
 
 You should leave the `npmd` service running in the background,
 this will make running other `npmd` commands much faster.
+
+npmd will pull down npm metadata, and store it in a leveldb.
+this will be less than 200mb, including a full text index.
 
 ## install
 
