@@ -9,7 +9,10 @@ exports.cli = function (db, config) {
       min: module + '!', max: module + '!~'
     }).on('data', function (data) {
       var pkg = data.value
-      console.log(pkg.name + '@' + pkg.version)
+      if(config.long)
+        console.log(pkg)
+      else
+        console.log(pkg.name + '@' + pkg.version)
     })
     .on('end', cb)
     return true
