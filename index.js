@@ -36,6 +36,7 @@ npmconf.load({}, function (err, conf) {
     require('npmd-link'),
     require('npmd-install')(config),
     require('./plugins/versions'),
+    require('./plugins/packages'),
     {commands: function (db) {
       db.commands.push(function (db, config, cb) {
           fs.createReadStream(__dirname + '/README.md')
