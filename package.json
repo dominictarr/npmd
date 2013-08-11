@@ -21,11 +21,11 @@
     "through": "~2.3.4",
     "level-sublevel": "~4.7.0",
     "level": "~0.10.0",
-    "npmd-resolve": ">=3.1.0 <4",
-    "npmd-install": ">=3.0.1 <4.0",
+    "npmd-resolve": ">=3.2.0 <4",
+    "npmd-install": ">=3.1.0 <4.0",
     "npmconf": ">=0.1.1 <0.2",
     "npmd-tree": ">=2.0.0 <3",
-    "npmd-link": "1.1"
+    "npmd-link": "1.2"
   },
   "bin": "./index.js",
   "devDependencies": {
