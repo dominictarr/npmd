@@ -23,7 +23,7 @@ npmconf.load({}, function (err, conf) {
   var db
 
   function createDb (db) {
-    if(!db) db = sublevel(levelup(config.path, config))
+    if(!db) db = sublevel(levelup(config.dbPath, config))
     return db
   }
 
