@@ -80,8 +80,17 @@ npmconf.load({}, function (err, conf) {
       ? multilevel.server(db)
       : multilevel.client(manifest)
 
+    stream.on('error', function (e) {
+      console.error(e.stack)
+      stream.end()
+    })
+
+    dbStream.on('error', function (e) {
+      console.error(e.stack)
+      stream.end()
+    })
+
     stream.pipe(dbStream).pipe(stream)
-    stream.on('error', function () {console.error('disconnected')})
   
     if(this.isClient) {
       //process commands.
