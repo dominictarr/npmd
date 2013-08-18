@@ -40,7 +40,7 @@ npmconf.load({}, function (err, conf) {
     require('./plugins/dependents'),
     {commands: function (db) {
       db.commands.push(function (db, config, cb) {
-          fs.createReadStream(__dirname + '/README.md')
+          fs.createReadStream(__dirname + '/docs/usage.md')
           .on('close', function () {
             cb()
           })
