@@ -25,7 +25,8 @@
     "npmd-install": ">=3.2.1 <4.0",
     "npmconf": ">=0.1.1 <0.2",
     "npmd-tree": ">=2.0.0 <3",
-    "npmd-link": "1.4"
+    "npmd-link": "1.4",
+    "strftime": "~0.6.2"
   },
   "bin": "./index.js",
   "devDependencies": {
