@@ -31,10 +31,9 @@ exports.db = function (db, config) {
       name: value.name,
       maintainers: value.maintainers,
       //version: value.version,
-      description: (function () {
-        if(!value.readme)
-          return value.description
-
+      description: value.description || '',
+      preview: (function () {
+        if(!value.readme) return
         //make a modue to find the matches.
         //this is really crude, at the moment.
 
