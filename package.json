@@ -9,8 +9,8 @@
   },
   "dependencies": {
     "level-couch-sync": "~1.0.0",
-    "map-reduce": "5.0",
-    "level-inverted-index": "~1.2.6",
+    "map-reduce": "4.0",
+    "level-inverted-index": "~1.2.8",
     "ecstatic": "~0.4.2",
     "level-manifest": "~1.1.1",
     "semver": "~1.1.4",
