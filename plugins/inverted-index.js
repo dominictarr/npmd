@@ -3,6 +3,17 @@ var Inverted = require('level-inverted-index')
 var through  = require('through')
 var strftime = require('strftime')
 
+function rpad (s, n) {
+  if (!s) s = ''
+  return s + Array(Math.max(2, n - s.length + 1)).join(' ')
+}
+
+function trim (s, n) {
+  if (!s) s = ''
+  if (s.length <= n) return s
+  return s.slice(0, n - 4) + '... '
+}
+
 exports.db = function (db, config) {
   var packageDb = db.sublevel('pkg')
   var indexDb = db.sublevel('index')
@@ -64,7 +75,7 @@ exports.commands = function (db) {
     return cb(new Error('expects search term'))
 
   var header = rpad('NAME', 22)
-    + rpad('DESCRIPTION', 62)
+    + rpad('DESCRIPTION', 61)
     + rpad('AUTHOR', 22)
     + rpad('DATE', 18)
   if (process.stdout.isTTY) header = header.slice(0, process.stdout.columns)
@@ -78,7 +89,7 @@ exports.commands = function (db) {
         .map(function (s) { return '=' + s.name })
         .join(' ')
       var line = rpad(data.key, 22)
-        + trim(rpad(data.value.description, 62), 62 - over)
+        + trim(rpad(data.value.description, 61), 61 - over)
         + trim(rpad(authors, 22), 22 - over)
         + trim(rpad(data.value.time, 18), 18 - over)
         + data.value.keywords.join(' ')
@@ -95,13 +106,3 @@ exports.commands = function (db) {
 
 }
 
-function rpad (s, n) {
-  if (!s) s = ''
-  return s + Array(Math.max(2, n - s.length + 1)).join(' ')
-}
-
-function trim (s, n) {
-  if (!s) s = ''
-  if (s.length <= n) return s
-  return s.slice(0, n - 3) + '...'
-}
