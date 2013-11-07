@@ -82,11 +82,10 @@ exports.commands = function (db) {
         + trim(rpad(authors, 22), 22 - over)
         + trim(rpad(data.value.time, 18), 18 - over)
         + data.value.keywords.join(' ')
-        + '\n'
-      this.queue(process.stdout.isTTY
+      this.queue((process.stdout.isTTY
         ? line.slice(0, process.stdout.columns)
         : line
-      )
+      ) + '\n')
     }))
     .on('end', cb)
     .pipe(process.stdout)
