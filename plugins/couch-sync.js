@@ -45,7 +45,7 @@ exports.db = function (db, config) {
 
         emit(data.id, {
           name        : doc.name,
-          description : doc.keywords,
+          description : doc.description,
           readme      : doc.readme,
           keywords    : doc.keywords,
           author      : doc.author,
