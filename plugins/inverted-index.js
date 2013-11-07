@@ -63,7 +63,7 @@ exports.commands = function (db) {
   db.sublevel('index')
     .createQueryStream(args)
     .pipe(through(function (data) {
-      this.queue(data.key + '\n')
+      this.queue(rpad(data.key, 22) + ' ' + data.value.description + '\n')
     }))
     .on('end', cb)
     .pipe(process.stdout)
@@ -71,4 +71,8 @@ exports.commands = function (db) {
     return true
   })
 
+}
+
+function rpad (s, n) {
+  return s + Array(Math.max(2, n - s.length + 1)).join(' ')
 }
