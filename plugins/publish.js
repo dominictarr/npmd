@@ -26,10 +26,22 @@ function readPkg (dir, cb) {
   })
 }
 
+function queuePublish (db, pkg, cb) {
+  var key = pkg.name + '-' + pkg.version
+  db.put(pkg.name + '@' + pkg.version, 0, cb)
+}
+
 exports.cli = function (db) {
   db.commands.push(function (db, config, cb) {
     var args = config._.slice()
-    if (args.shift() !== 'publish') return
+    var cmd = args.shift()
+    if (cmd === 'publish-queue') {
+      db.sublevel('publish-queue').createKeyStream()
+        .on('data', console.log.bind(console))
+        .on('end', cb)
+      return true
+    }
+    if (cmd !== 'publish') return
  
     pkgRoot(process.cwd(), function (err, dir) {
       if (err) return cb(err)
@@ -38,17 +50,23 @@ exports.cli = function (db) {
       ps.stderr.pipe(process.stderr)
       ps.stdout.pipe(process.stdout)
       
-      ps.on('exit', function (code) {
-        if (code !== 0) {
-          return cb(new Error('non-zero exit code from `npm pack`'))
-        }
-        readPkg(dir, function (err, pkg) {
+      ps.on('exit', function (code) { onPackExit(code, dir) })
+    })
+
+    function onPackExit (code, dir) {
+      if (code !== 0) {
+        return cb(new Error('non-zero exit code from `npm pack`'))
+      }
+      readPkg(dir, function (err, pkg) {
+        if (err) cb(err)
+        else cachePackFile(pkg, config.cache, function (err) {
           if (err) cb(err)
-          else cachePackFile(pkg, config.cache, cb)
+          else queuePublish(db.sublevel('publish-queue'), pkg, cb)
         })
       })
-    })
+    }
  
     return true
   })
+ 
 }
