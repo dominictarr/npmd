@@ -30,6 +30,7 @@ npmconf.load({}, function (err, conf) {
   var plugins = [
     require('./plugins/couch-sync'),
     require('./plugins/inverted-index'),
+    require('./plugins/publish'),
     require('./plugins/authors'),
     require('npmd-resolve'),
     require('npmd-tree'),
