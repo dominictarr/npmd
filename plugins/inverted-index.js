@@ -44,7 +44,7 @@ exports.db = function (db, config) {
       maintainers: value.maintainers,
       description: value.description || '',
       maintainers: value.maintainers,
-      time: strftime('%F %H:%M', new Date(value.time.modified)),
+      time: strftime('%F %H:%M', new Date(value.time && value.time.modified)),
       keywords: value.keywords || [],
       preview: (function () {
         if(!value.readme) return
