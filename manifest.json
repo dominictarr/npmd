@@ -47,6 +47,11 @@
         }
       }
     },
+    "queue": {
+      "methods": {},
+      "_prefix": "queue",
+      "sublevels": {}
+    },
     "authors": {
       "methods": {},
       "_prefix": "authors",

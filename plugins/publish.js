@@ -80,7 +80,7 @@ function writeBatch (db, pkg, cb) {
   var now = new Date
   db.batch([
     {
-      prefix: db.sublevel('pub'),
+      prefix: db.sublevel('queue'),
       type: 'put',
       key: pkg.name + '@' + pkg.version,
       value: 0
@@ -122,12 +122,16 @@ function writeBatch (db, pkg, cb) {
   ], cb)
 }
 
+exports.db = function (db, config) {
+  db.sublevel('queue')
+}
+
 exports.cli = function (db) {
   db.commands.push(function (db, config, cb) {
     var args = config._.slice()
     var cmd = args.shift()
-    if (cmd === 'publish-queue') {
-      db.sublevel('pub').createKeyStream()
+    if (cmd === 'queue') {
+      db.sublevel('queue').createKeyStream()
         .on('data', console.log.bind(console))
         .on('end', cb)
       return true
