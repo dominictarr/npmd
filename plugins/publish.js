@@ -36,7 +36,8 @@ function queuePublish (db, cacheDir, pkg, cb) {
  
   var pending = 5
   exec('npm whoami', function (err, out) {
-    pkg.maintainers = String(out || '').trim() // TODO: the other maintainers
+    // TODO: the other maintainers
+    pkg.maintainers = out ? [ String(out).trim() ] : []
     done()
   })
 
@@ -96,7 +97,7 @@ function writeBatch (db, pkg, cb) {
         author: pkg.author,
         licenses: pkg.licenses || pkg.license ? [ pkg.license ] : undefined,
         repository: pkg.repository,
-        maintainers: pkg.maintainers,
+        maintainers: pkg.maintainers
       }
     },
     {
@@ -119,7 +120,6 @@ function writeBatch (db, pkg, cb) {
       }
     }
   ], cb)
-console.log(pkg)
 }
 
 exports.cli = function (db) {

@@ -21,7 +21,6 @@ exports.db = function (db, config) {
   var i = 0
 
   Inverted(packageDb, indexDb, function (key, value, index) {
-console.log('indexed:', value.name)
     index(value.readme)
     index(value.name)
     index(value.author)
@@ -45,7 +44,7 @@ console.log('indexed:', value.name)
       maintainers: value.maintainers,
       description: value.description || '',
       maintainers: value.maintainers,
-      time: strftime('%F %H:%M', new Date(value.time.modified)),
+      time: strftime('%F %H:%M', new Date(value.time && value.time.modified)),
       keywords: value.keywords || [],
       preview: (function () {
         if(!value.readme) return
