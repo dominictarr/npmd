@@ -80,13 +80,13 @@ function writeBatch (db, pkg, cb) {
   var now = new Date
   db.batch([
     {
-      prefix: db.sublevel('queue'),
+      prefix: db.sublevel('queue').prefix(),
       type: 'put',
       key: pkg.name + '@' + pkg.version,
       value: 0
     },
     {
-      prefix: db.sublevel('pkg'),
+      prefix: db.sublevel('pkg').prefix(),
       type: 'put',
       key: pkg.name,
       value: {
@@ -101,7 +101,7 @@ function writeBatch (db, pkg, cb) {
       }
     },
     {
-      prefix: db.sublevel('ver'),
+      prefix: db.sublevel('ver').prefix(),
       type: 'put',
       key: pkg.name + '!' + pad(pkg.version),
       value: {
