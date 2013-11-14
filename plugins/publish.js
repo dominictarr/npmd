@@ -2,6 +2,9 @@ var spawn = require('child_process').spawn
 var exec = require('child_process').exec
 var pad = require('padded-semver').pad
 var unpad = require('padded-semver').unpad
+var map = require('map-stream')
+var RegClient = require('npm-registry-client')
+var npmconf = require('npmconf')
 
 var fs = require('fs')
 var path = require('path')
@@ -16,6 +19,17 @@ function pkgRoot (dir, cb) {
   })
 }
 
+function shasum (file, cb) {
+  var hash = ''
+  var s = fs.createReadStream(file)
+  s.on('error', cb)
+  s.pipe(crypto.createHash('sha1', { encoding: 'hex' }))
+    .on('data', function (s) { hash += s })
+    .on('end', function () {
+      cb(null, hash)
+    })
+}
+
 function cachePackFile (pkg, cacheDir, cb) {
   var file = pkg.name + '-' + pkg.version + '.tgz'
   fs.unlink(file, cb)
@@ -27,6 +41,18 @@ function readPkg (dir, cb) {
     try { var pkg = JSON.parse(src) }
     catch (e) { return cb(e) }
     cb(null, pkg)
+  })
+}
+
+function readme (pkgdir, cb) {
+  fs.readdir(pkgdir, function (err, files) {
+    var rfile = files.filter(function (file) {
+      return /^readme(\.(md|markdown|txt))?$/i.test(file)
+    }).sort()[0]
+    if (!rfile) cb()
+    else fs.readFile(rfile, 'utf8', function (err, src) {
+      cb(err, src, rfile)
+    })
   })
 }
 
@@ -53,23 +79,15 @@ function queuePublish (db, cacheDir, pkg, cb) {
     done()
   })
 
-  var hash = ''
-  fs.createReadStream(tgz)
-    .pipe(crypto.createHash('sha1', { encoding: 'hex' }))
-    .on('data', function (s) { hash += s })
-    .on('end', function () {
-      pkg._tgzHash = hash
-      done()
-    })
+  shasum(tgz, function (err, hash) {
+    if (err) return cb(err)
+    pkg._tgzHash = hash
+    done()
+  })
  
-  fs.readdir(pkgdir, function (err, files) {
-    var readme = files.filter(function (file) {
-      return /^readme(\.(md|markdown|txt))?$/i.test(file)
-    }).sort()[0]
-    fs.readFile(readme, 'utf8', function (err, src) {
-      pkg.readme = String(src || '')
-      done()
-    })
+  readme(pkgdir, function (err, src) {
+    pkg.readme = String(src || '')
+    done()
   })
 
   function done () {
@@ -150,6 +168,59 @@ exports.cli = function (db) {
           key: name + '!' + pad(ver)
         },
       ], cb)
+      return true
+    }
+    else if (cmd === 'queue' && args[0] === 'sync') {
+      db.sublevel('queue').createKeyStream().pipe(map(function (key, next) {
+        var name = key.split('!')[0]
+        var ver = unpad(key.replace(/^[^!]+!/, ''))
+        var pkdir = path.join(config.cache, name, ver, 'package')
+        var tgz = path.join(config.cache, name, ver, 'package.tgz')
+        var pending = 4
+        var readmeSource, readmeFile, pkg, reg, hash
+ 
+        readPkg(pkdir, function (err, p) {
+          if (err) return cb(err)
+          pkg = p
+          done()
+        })
+        shasum(tgz, function (err, h) {
+          if (err) return cb(err)
+          hash = h
+          done()
+        })
+        readme(pkdir, function (err, src, file) {
+          readmeSource = src
+          readmeFile = file
+          done()
+        })
+        npmconf.load(function (err, nconf) {
+          if (err) return cb(err)
+          reg = new RegClient(nconf)
+          done()
+        })
+ 
+        function done () {
+          if (--pending !== 0) return
+ 
+          pkg.dist = { shasum: hash }
+          pkg._id = name + '@' + ver
+          pkg.readme = readmeSource
+          pkg.readmeFilename = readmeFile
+ 
+          reg.publish(pkg, tgz, function (err) {
+            if (err) cb(err)
+            else remove()
+          })
+        }
+
+        function remove () {
+          db.sublevel('queue').del(name + '!' + pad(ver), function (err) {
+            if (!err) console.log(name + '@' + ver)
+            cb(err)
+          })
+        }
+      }))
       return true
     }
     else if (cmd === 'queue') {
