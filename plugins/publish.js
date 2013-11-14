@@ -37,7 +37,7 @@ function queuePublish (db, cacheDir, pkg, cb) {
   var pending = 5
   exec('npm whoami', function (err, out) {
     // TODO: the other maintainers
-    pkg.maintainers = out ? [ String(out).trim() ] : []
+    pkg.maintainers = out ? [ { name: String(out).trim() } ] : []
     done()
   })
 
