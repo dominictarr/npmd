@@ -2,9 +2,9 @@ var spawn = require('child_process').spawn
 var exec = require('child_process').exec
 var pad = require('padded-semver').pad
 var unpad = require('padded-semver').unpad
-var map = require('map-stream')
 var RegClient = require('npm-registry-client')
 var npmconf = require('npmconf')
+var Writable = require('stream').Writable
 
 var fs = require('fs')
 var path = require('path')
@@ -171,7 +171,9 @@ exports.cli = function (db) {
       return true
     }
     else if (cmd === 'queue' && args[0] === 'sync') {
-      db.sublevel('queue').createKeyStream().pipe(map(function (key, next) {
+      var ws = new Writable({ objectMode: true, encoding: 'utf8' })
+      
+      ws._write = function (key, enc, next) {
         var name = key.split('!')[0]
         var ver = unpad(key.replace(/^[^!]+!/, ''))
         var pkdir = path.join(config.cache, name, ver, 'package')
@@ -217,10 +219,13 @@ exports.cli = function (db) {
         function remove () {
           db.sublevel('queue').del(name + '!' + pad(ver), function (err) {
             if (!err) console.log(name + '@' + ver)
-            cb(err)
+            next()
           })
         }
-      }))
+      }
+      ws.on('finish', cb);
+      db.sublevel('queue').createKeyStream().pipe(ws)
+ 
       return true
     }
     else if (cmd === 'queue') {
