@@ -146,11 +146,6 @@ exports.cli = function (db) {
         },
         {
           type: 'del',
-          prefix: db.sublevel('pkg').prefix(),
-          key: name
-        },
-        {
-          type: 'del',
           prefix: db.sublevel('ver').prefix(),
           key: name + '!' + pad(ver)
         },
