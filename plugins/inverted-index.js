@@ -21,6 +21,7 @@ exports.db = function (db, config) {
   var i = 0
 
   Inverted(packageDb, indexDb, function (key, value, index) {
+console.log('indexed:', value.name)
     index(value.readme)
     index(value.name)
     index(value.author)

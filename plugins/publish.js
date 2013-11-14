@@ -1,7 +1,9 @@
 var spawn = require('child_process').spawn
+var exec = require('child_process').exec
+var pad = require('padded-semver').pad
 var fs = require('fs')
 var path = require('path')
-var mkdirp = require('mkdirp')
+var crypto = require('crypto')
 
 function pkgRoot (dir, cb) {
   if (dir === '') return cb(new Error('not in a package directory'))
@@ -14,7 +16,7 @@ function pkgRoot (dir, cb) {
 
 function cachePackFile (pkg, cacheDir, cb) {
   var file = pkg.name + '-' + pkg.version + '.tgz'
-  fs.unlink(file, cb);
+  fs.unlink(file, cb)
 }
 
 function readPkg (dir, cb) {
@@ -26,9 +28,98 @@ function readPkg (dir, cb) {
   })
 }
 
-function queuePublish (db, pkg, cb) {
+function queuePublish (db, cacheDir, pkg, cb) {
   var key = pkg.name + '-' + pkg.version
-  db.put(pkg.name + '@' + pkg.version, 0, cb)
+  var tgz = path.join(cacheDir, pkg.name, pkg.version, 'package.tgz')
+  var pkgdir = path.join(cacheDir, pkg.name, pkg.version, 'package')
+  var gypfile = path.join(pkgdir, 'binding.gyp')
+ 
+  var pending = 5
+  exec('npm whoami', function (err, out) {
+    pkg.maintainers = String(out || '').trim() // TODO: the other maintainers
+    done()
+  })
+
+  fs.exists(gypfile, function (ex) {
+    pkg._gypfile = ex
+    done()
+  })
+ 
+  fs.stat(tgz, function (err, stat) {
+    pkg._tgzSize = stat.size
+    done()
+  })
+
+  var hash = ''
+  fs.createReadStream(tgz)
+    .pipe(crypto.createHash('sha1', { encoding: 'hex' }))
+    .on('data', function (s) { hash += s })
+    .on('end', function () {
+      pkg._tgzHash = hash
+      done()
+    })
+ 
+  fs.readdir(pkgdir, function (err, files) {
+    var readme = files.filter(function (file) {
+      return /^readme(\.(md|markdown|txt))?$/i.test(file)
+    }).sort()[0]
+    fs.readFile(readme, 'utf8', function (err, src) {
+      pkg.readme = String(src || '')
+      done()
+    })
+  })
+
+  function done () {
+    if (--pending !== 0) return
+    writeBatch(db, pkg, cb)
+  }
+}
+
+function writeBatch (db, pkg, cb) {
+  var now = new Date
+  db.batch([
+    {
+      prefix: db.sublevel('pub'),
+      type: 'put',
+      key: pkg.name + '@' + pkg.version,
+      value: 0
+    },
+    {
+      prefix: db.sublevel('pkg'),
+      type: 'put',
+      key: pkg.name,
+      value: {
+        name: pkg.name,
+        description: pkg.description,
+        readme: pkg.readme,
+        keywords: pkg.keywords,
+        author: pkg.author,
+        licenses: pkg.licenses || pkg.license ? [ pkg.license ] : undefined,
+        repository: pkg.repository,
+        maintainers: pkg.maintainers,
+      }
+    },
+    {
+      prefix: db.sublevel('ver'),
+      type: 'put',
+      key: pkg.name + '!' + pad(pkg.version),
+      value: {
+        name: pkg.name,
+        version: pkg.version,
+        dependencies: pkg.dependencies,
+        devDependencies: pkg.devDependencies,
+        description: pkg.description,
+        size: pkg._tgzSize,
+        time: {
+          modified: now,
+          created: now
+        },
+        shasum: pkg._tgzHash,
+        gypfile: pkg._gypfile
+      }
+    }
+  ], cb)
+console.log(pkg)
 }
 
 exports.cli = function (db) {
@@ -36,7 +127,7 @@ exports.cli = function (db) {
     var args = config._.slice()
     var cmd = args.shift()
     if (cmd === 'publish-queue') {
-      db.sublevel('publish-queue').createKeyStream()
+      db.sublevel('pub').createKeyStream()
         .on('data', console.log.bind(console))
         .on('end', cb)
       return true
@@ -61,7 +152,7 @@ exports.cli = function (db) {
         if (err) cb(err)
         else cachePackFile(pkg, config.cache, function (err) {
           if (err) cb(err)
-          else queuePublish(db.sublevel('publish-queue'), pkg, cb)
+          else queuePublish(db, config.cache, pkg, cb)
         })
       })
     }
