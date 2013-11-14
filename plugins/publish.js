@@ -1,6 +1,8 @@
 var spawn = require('child_process').spawn
 var exec = require('child_process').exec
 var pad = require('padded-semver').pad
+var unpad = require('padded-semver').unpad
+
 var fs = require('fs')
 var path = require('path')
 var crypto = require('crypto')
@@ -82,7 +84,7 @@ function writeBatch (db, pkg, cb) {
     {
       prefix: db.sublevel('queue').prefix(),
       type: 'put',
-      key: pkg.name + '@' + pkg.version,
+      key: pkg.name + '!' + pad(pkg.version),
       value: 0
     },
     {
@@ -130,9 +132,38 @@ exports.cli = function (db) {
   db.commands.push(function (db, config, cb) {
     var args = config._.slice()
     var cmd = args.shift()
-    if (cmd === 'queue') {
+    if (cmd === 'queue' && args[0] === 'rm') {
+      var name = args[1].split('@')[0]
+      var ver = args[1].split('@')[1]
+
+      if (!ver) return cb(new Error('usage: npmd queue rm pkg@ver'))
+
+      db.batch([
+        {
+          type: 'del',
+          prefix: db.sublevel('queue').prefix(),
+          key: name + '!' + pad(ver)
+        },
+        {
+          type: 'del',
+          prefix: db.sublevel('pkg').prefix(),
+          key: name
+        },
+        {
+          type: 'del',
+          prefix: db.sublevel('ver').prefix(),
+          key: name + '!' + pad(ver)
+        },
+      ], cb)
+      return true
+    }
+    else if (cmd === 'queue') {
       db.sublevel('queue').createKeyStream()
-        .on('data', console.log.bind(console))
+        .on('data', function (key) {
+          var ver = unpad(key.replace(/^[^!]+!/, ''))
+          var name = key.split('!')[0] + '@' + ver
+          console.log(name)
+        })
         .on('end', cb)
       return true
     }
