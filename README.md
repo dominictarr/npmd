@@ -39,6 +39,36 @@ npmd install browserify --greedy
 `--greedy` is optional, if enabled, the dependency tree is flattened as much as possible.
 so you have less duplication.
 
+## publish
+
+publish a module locally. In a package directory, just do:
+
+```
+npmd publish
+```
+
+and your package version will be stashed into a queue for local use. You can
+`npmd install yourpkg` locally even if `yourpkg` isn't on the public npm yet.
+You can even have multiple versions of your package queued up locally.
+
+To inspect your local package queue, do:
+
+```
+npmd queue
+```
+
+You can remove a package from your queue with:
+
+```
+npmd queue rm pkgname@version
+```
+
+To sync your local package queue with the public npm, you can run:
+
+```
+npmd queue sync
+```
+
 ## resolve
 
 resolve all module versions required to install a given module.
