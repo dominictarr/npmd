@@ -25,5 +25,7 @@ npmd packages prefix?                   # output modules starting with prefix
 
 npmd versions modulename                # output versions of modulesname
 
+npmd readme modluename                  # output readme of modulename
+
 npmd dependencies [$modulename1,...]    # output modules that depend on modules
-  
+
