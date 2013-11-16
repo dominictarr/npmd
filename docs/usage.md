@@ -25,6 +25,8 @@ npmd packages prefix?                   # output modules starting with prefix
 
 npmd versions modulename                # output versions of modulesname
 
+npmd readme modluename                  # output readme of modulename
+
 npmd dependencies [$modulename1,...]    # output modules that depend on modules
 
 npmd search [$term,... ]                # search npmd local index
@@ -34,3 +36,4 @@ npmd publish                            # publish locally (installable)
 npmd queue                              # show queued publishes
 
 npmd queue sync                         # push queued publishes to the npm registry.
+
