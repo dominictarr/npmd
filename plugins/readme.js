@@ -3,12 +3,10 @@ exports.cli = function (db, config) {
     var args = config._.slice()
     if(args.shift() != 'readme') return
     var module = args.shift()
-    db.sublevel('pkg').createReadStream({
-      min: module, max: module
-    }).on('data', function (data) {
-      console.log(data.value.readme)
+    db.sublevel('pkg').get(module, function (err, data) {
+      if(err) return cb(err)
+      console.log(data.readme)
+      cb(null, data.readme)
     })
-    .on('end', cb)
-    return true
   })
 }
