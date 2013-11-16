@@ -8,7 +8,7 @@
     "url": "git://github.com/dominictarr/npmd.git"
   },
   "dependencies": {
-    "level-couch-sync": "~1.0.0",
+    "level-couch-sync": "~1.0.4",
     "map-reduce": "4.0",
     "level-inverted-index": "~1.2.8",
     "ecstatic": "~0.4.2",
