@@ -27,7 +27,7 @@ npmd versions modulename                # output versions of modulesname
 
 npmd readme modluename                  # output readme of modulename
 
-npmd dependencies [$modulename1,...]    # output modules that depend on modules
+npmd dependents   [$modulename1,...]    # output modules that depend on modules
 
 npmd search [$term,... ]                # search npmd local index
 
