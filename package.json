@@ -27,7 +27,8 @@
     "npmd-tree": ">=2.0.0 <3",
     "npmd-link": "1.4",
     "strftime": "~0.6.2",
-    "npm-registry-client": "~0.2.29"
+    "npm-registry-client": "~0.2.29",
+    "search-context": "~0.0.0"
   },
   "bin": "./index.js",
   "devDependencies": {
