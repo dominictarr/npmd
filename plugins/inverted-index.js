@@ -2,6 +2,7 @@
 var Inverted = require('level-inverted-index')
 var through  = require('through')
 var strftime = require('strftime')
+var context = require('search-context')
 
 function rpad (s, n) {
   if (!s) s = ''
@@ -27,18 +28,6 @@ exports.db = function (db, config) {
     index(value.keywords)
     index(value.description)
   }, function (value, query) {
-    /*
-    var matches = []
-    
-    var matchers = 
-      query.map(function (str) {
-        return new RegExp('(?:\s|^)' + str.replace('~', '.*') + '(?:$|\s)')
-      })
-    
-    //return value.description
-    
-    value.readme.split('\n')
-    */
     return {
       name: value.name,
       maintainers: value.maintainers,
@@ -46,22 +35,8 @@ exports.db = function (db, config) {
       maintainers: value.maintainers,
       time: strftime('%F %H:%M', new Date(value.time && value.time.modified)),
       keywords: value.keywords || [],
-      preview: (function () {
-        if(!value.readme) return
-        //make a modue to find the matches.
-        //this is really crude, at the moment.
-
-        return value.readme.split('\n')
-                .slice(0, 5).join('\n')
-      })()
+      readme: value.readme
     }
-    return [
-      '-----------------------------',
-      (value.readme ? value.readme.substring(0, 140) + '...' : value.description || value.name)
-      .split('\n').map(function (e) {
-        return '  ' + e
-      }).join('\n')
-    ].join('\n')
   })
 }
 
@@ -82,7 +57,7 @@ exports.commands = function (db) {
   process.stdout.write(header + '\n')
  
   db.sublevel('index')
-    .createQueryStream(args)
+    .createQueryStream(args, {})
     .pipe(through(function (data) {
       var over = Math.max(0, data.key.length - 21)
       var authors = data.value.maintainers
@@ -97,6 +72,25 @@ exports.commands = function (db) {
         ? line.slice(0, process.stdout.columns)
         : line
       ) + '\n')
+
+      if(data.value.readme)
+      this.queue((function () {
+        //make a modue to find the matches.
+        //this is really crude, at the moment.
+  
+        var l = (config.context || (process.stdout.columns - 10))
+        var m = context(data.value.readme, args, Math.floor(l*1.2))
+        return '    ...'+ (
+          m.split('\n')
+          .map(function (e) { return e.trim() })
+          .join(' ')
+          .substring(l).trim()
+        ) + '...'
+      })() || '')
+
+      if(config.context != 0)
+        this.queue(data.value.preview+'\n')
+
     }))
     .on('end', cb)
     .pipe(process.stdout)
