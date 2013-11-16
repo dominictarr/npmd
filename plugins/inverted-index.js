@@ -78,18 +78,15 @@ exports.commands = function (db) {
         //make a modue to find the matches.
         //this is really crude, at the moment.
   
-        var l = (config.context || (process.stdout.columns - 10))
-        var m = context(data.value.readme, args, Math.floor(l*1.2))
+        var l = (config.context || (process.stdout.isTTY ? process.stdout.columns - 10 : 70))
+        var m = context(data.value.readme, args, l)
         return '    ...'+ (
           m.split('\n')
           .map(function (e) { return e.trim() })
           .join(' ')
-          .substring(l).trim()
-        ) + '...'
+          .substring(0, l).trim()
+        ) + '...\n'
       })() || '')
-
-      if(config.context != 0)
-        this.queue(data.value.preview+'\n')
 
     }))
     .on('end', cb)
