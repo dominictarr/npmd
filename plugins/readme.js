@@ -10,7 +10,9 @@ exports.cli = function (db, config) {
         console.log('sorry, readme file not found.')
       else
         console.log(data.readme)
+
       cb(null, data.readme || data)
     })
+    return true
   })
 }
