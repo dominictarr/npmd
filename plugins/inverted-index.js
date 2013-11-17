@@ -84,7 +84,7 @@ exports.commands = function (db) {
           m.split('\n')
           .map(function (e) { return e.trim() })
           .join(' ')
-          .substring(0, l).trim()
+          .trim()
         ) + '...\n'
       })() || '')
 
