@@ -27,12 +27,14 @@ module.exports = {
 
       db.sublevel('authors').createReadStream({range: range, tail: config.tail})
       .pipe(through(function (data) {
-        this.queue(data.key + '\n')
+        this.queue(data.key.substring(2) + '\n')
       }))
       .on('end', function () {
           cb()
       })
       .pipe(process.stdout)
+
+      return true
     })
   }
 }
