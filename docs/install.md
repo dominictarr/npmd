@@ -12,6 +12,14 @@ greedily dedupe by default. (see [npm resolve](./resolve.md))
 install globally (use for commands)
 (sets `path=${npm.config.prefix}/lib` and `bin=${npm.config.prefix}/bin`
 
+## --offline
+
+resolve only modules that are in the local cache.
+
+## --correct
+
+do not use optimistic resolution (a little slower)
+
 ## --path $DIR
 
 directory that the target `node_modules` directory should be created in.
