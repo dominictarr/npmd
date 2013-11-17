@@ -54,14 +54,15 @@ exports.commands = function (db) {
     return (
       presense(doc.name, query)        * (c.searchWeightName        || 0.5)
     + presense(doc.description, query) * (c.searchWeightDescription || 2)
-    + (
-        (doc.stats.stddev              * (c.searchWeightStddev      || 1))
+    + ( (doc.stats.stddev              * (c.searchWeightStddev      || 1))
       * (doc.stats.avg                 * (c.searchWeightAvg         || 0.2))
       )                                * (c.searchWeightGroup       || 1)
     )
   }
 
   db.commands.push(function (db, config, cb) {
+
+  var TTY = process.stdout.isTTY
 
   var args = config._.slice()
   if(args.shift() != 'search')
@@ -74,24 +75,36 @@ exports.commands = function (db) {
     return context.highlight(
       string, args,
       function (e) {
-        return process.stdout.isTTY ? e.bold : '*' + e +'*'
+        return TTY ? e.bold : '*' + e +'*'
       }
     )
   }
+
 
   var header = rpad('NAME', 22)
     + rpad('DESCRIPTION', 61)
     + rpad('AUTHOR', 22)
     + rpad('DATE', 18)
-  if (process.stdout.isTTY) header = header.slice(0, process.stdout.columns)
+
+  if (TTY) header = header.slice(0, process.stdout.columns)
   process.stdout.write(header + '\n')
- 
+
+  var showRank = config['show-rank'] === true
+  var showReadme = config['show-readme'] !== false
+
+  var lines = 1 + (showRank?1:0) + (showReadme?1:0)
+
+  var maxResults = config.results || (TTY ? Math.floor((process.stdout.rows-2) / lines) : Number.MAX_VALUE)
+  var i = 0
   db.sublevel('index')
     .createQueryStream(args, {})
     .pipe(through(function (e) {
       e.value.stats = context.stats(e.value.readme || e.value.description || '', args) || {}
       e.value.rank = rank(e.value, args, config)
-      this.queue(e)
+      if(++i <= maxResults)
+        this.queue(e)
+      else
+        this.queue(null)
     }))
     .pipe(sort(function (a, b) {
       //XXX SORT
