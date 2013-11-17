@@ -21,7 +21,7 @@
     "through": "~2.3.4",
     "level-sublevel": "~4.7.0",
     "level": "~0.10.0",
-    "npmd-resolve": ">=3.2.0 <4",
+    "npmd-resolve": ">=4 <5",
     "npmd-install": ">=3.2.1 <4.0",
     "npmconf": "~0.1.5",
     "npmd-tree": ">=2.0.0 <3",
