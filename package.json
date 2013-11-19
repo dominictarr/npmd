@@ -23,14 +23,16 @@
     "level": "~0.10.0",
     "npmd-resolve": ">=4 <5",
     "npmd-install": ">=3.2.1 <4.0",
-    "npmconf": "~0.1.5",
     "npmd-tree": ">=2.0.0 <3",
     "npmd-link": "1.4",
     "strftime": "~0.6.2",
     "npm-registry-client": "~0.2.29",
     "search-context": "~0.0.4",
     "sort-stream": "~1.0.0",
-    "add-deps": "~1.0.1"
+    "add-deps": "~1.0.1",
+    "optimist": "~0.6.0",
+    "to-camel-case": "~0.2.0",
+    "npmconf": "~0.1.5"
   },
   "bin": "./index.js",
   "devDependencies": {

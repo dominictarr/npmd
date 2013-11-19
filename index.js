@@ -8,18 +8,15 @@ var multilevel = require('multilevel')
 var levelup    = require('level')
 var sublevel   = require('level-sublevel')
 var Manifest   = require('level-manifest')
-var npmconf    = require('npmconf')
 
-var getConf    = require('./config')
+var config     = require('./config')
 var commands   = require('./options')
 
 var manifest   = require('./manifest.json')
 
 //pull npmconf, so know where to install global modules.
-npmconf.load({}, function (err, conf) {
 
-  var config = getConf(conf)
-
+  console.log(config)
   var db
 
   function createDb (db) {
@@ -131,4 +128,4 @@ npmconf.load({}, function (err, conf) {
       process.exit()
     })
   })
-})
+
