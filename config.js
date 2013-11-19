@@ -43,6 +43,13 @@ module.exports = (function () {
     .alias('S', 'save')
   )
 
+  config.bin = config.bin ||
+  ( config.global ? path.join(config.prefix, 'lib', 'bin')
+  : path.join(config.path || process.cwd(), 'node_modules', '.bin'))
+
+  if(!config.path && config.global)
+    config.path = config.prefix
+
   for(var k in config)
     config[toCC(k)] = config[k]
 
