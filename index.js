@@ -16,7 +16,6 @@ var manifest   = require('./manifest.json')
 
 //pull npmconf, so know where to install global modules.
 
-  console.log(config)
   var db
 
   function createDb (db) {
@@ -29,10 +28,10 @@ var manifest   = require('./manifest.json')
     require('./plugins/inverted-index'),
     require('./plugins/publish'),
     require('./plugins/authors'),
-    require('npmd-resolve'),
+    require('./plugins/resolve'),
     require('npmd-tree'),
     require('npmd-link'),
-    require('npmd-install')(config),
+    require('./plugins/install'),
     require('./plugins/versions'),
     require('./plugins/packages'),
     require('./plugins/readme'),
