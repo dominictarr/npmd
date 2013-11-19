@@ -41,6 +41,7 @@ npmconf.load({}, function (err, conf) {
     require('./plugins/readme'),
     require('./plugins/dependents'),
     require('./plugins/help'),
+    require('./plugins/add'),
     {commands: function (db) {
       db.commands.push(function (db, config, cb) {
           fs.createReadStream(__dirname + '/docs/usage.md')
