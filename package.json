@@ -24,7 +24,7 @@
     "npmd-resolve": ">=5.2.1 <6",
     "npmd-install": ">=4.1.0 <5.0",
     "npmd-tree": ">=2.0.0 <3",
-    "npmd-link": "1.4",
+    "npmd-link": "2",
     "strftime": "~0.6.2",
     "npm-registry-client": "~0.2.29",
     "search-context": "~0.0.4",
