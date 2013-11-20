@@ -10,8 +10,8 @@ exports.db = function (db, config) {
     if(!cb) cb = opts, opts = {}
     if(opts.hash) opts.greedy = false
 
-    if(!args.length)
-      args = deps(process.cwd(), config)
+    if(!module || !module.length)
+      module = deps(process.cwd(), config)
 
     ls(function (err, tree) {
       if(err) return cb(err)
