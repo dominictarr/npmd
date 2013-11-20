@@ -1,7 +1,8 @@
 
 var leaves = require('npmd-leaves')
+var deps = require('get-deps')
 
-module.exports.db = function (db, config) {
+exports.db = function (db, config) {
   db.methods.leaves = {type: 'async'}
   db.leaves = function (module, opts, cb) {
     if(!cb)
@@ -12,7 +13,8 @@ module.exports.db = function (db, config) {
 
     db.resolve(module, opts, function (err, tree) {
       if(err) cb(err)
-      cb(err, leaves(tree), tree)
+      try { tree = leaves(tree) } catch (err) { return cb(err) }
+      cb(err, tree)
     })
   }
 }

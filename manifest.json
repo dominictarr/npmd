@@ -3,7 +3,7 @@
     "resolve": {
       "type": "async"
     },
-    "lResolve": {
+    "leaves": {
       "type": "async"
     }
   },
