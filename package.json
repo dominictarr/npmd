@@ -21,7 +21,7 @@
     "through": "~2.3.4",
     "level-sublevel": "~4.7.0",
     "level": "~0.10.0",
-    "npmd-resolve": ">=5.1 <6",
+    "npmd-resolve": ">=5.2.1 <6",
     "npmd-install": ">=4.1.0 <5.0",
     "npmd-tree": ">=2.0.0 <3",
     "npmd-link": "1.4",
@@ -34,7 +34,8 @@
     "to-camel-case": "~0.2.0",
     "npmconf": "~0.1.5",
     "osenv": "0.0.3",
-    "get-deps": "~2.0.4"
+    "get-deps": "~2.0.4",
+    "npmd-leaves": "~1.1.0"
   },
   "bin": "./index.js",
   "devDependencies": {
