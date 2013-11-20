@@ -31,7 +31,7 @@ var manifest   = require('./manifest.json')
     require('./plugins/resolve'),
     require('npmd-tree'),
     require('./plugins/leaves'),
-//    require('npmd-link'),
+    require('./plugins/link'),
     require('./plugins/install'),
     require('./plugins/versions'),
     require('./plugins/packages'),
