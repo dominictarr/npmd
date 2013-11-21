@@ -29,7 +29,7 @@ var manifest   = require('./manifest.json')
     require('./plugins/publish'),
     require('./plugins/authors'),
     require('./plugins/resolve'),
-    require('npmd-tree'),
+    require('./plugins/tree'),
     require('./plugins/leaves'),
     require('./plugins/link'),
     require('./plugins/install'),
