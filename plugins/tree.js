@@ -1,5 +1,4 @@
 var tree = require('npmd-tree')
-console.log(tree)
 
 exports.cli = function (db) {
   db.commands.push(function (db, config, cb) {
