@@ -41,6 +41,15 @@ module.exports = (function () {
     .alias('f', 'force')
     .alias('D', 'saveDev')
     .alias('S', 'save')
+    .boolean('global')
+    .boolean('online')
+    .boolean('offline')
+    .boolean('save-dev')
+    .boolean('saveDev')
+    .boolean('save-peer')
+    .boolean('savePeer')
+    .boolean('save')
+
   )
 
   config.bin = config.bin ||
