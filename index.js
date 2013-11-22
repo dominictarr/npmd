@@ -9,7 +9,7 @@ var levelup    = require('level')
 var sublevel   = require('level-sublevel')
 var Manifest   = require('level-manifest')
 
-var config     = require('./config')
+var config     = require('npmd-config')
 var commands   = require('./options')
 
 var manifest   = require('./manifest.json')
