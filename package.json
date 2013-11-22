@@ -35,7 +35,8 @@
     "npmconf": "~0.1.5",
     "osenv": "0.0.3",
     "get-deps": "~2.0.4",
-    "npmd-leaves": "~1.1.0"
+    "npmd-leaves": "~1.1.0",
+    "npmd-bin": "1.2"
   },
   "bin": "./index.js",
   "devDependencies": {
