@@ -49,11 +49,11 @@ module.exports = (function () {
     .boolean('save-peer')
     .boolean('savePeer')
     .boolean('save')
-
+    .argv
   )
 
   config.bin = config.bin ||
-  ( config.global ? path.join(config.prefix, 'lib', 'bin')
+  ( config.global ? path.join(config.prefix, 'bin')
   : path.join(config.path || process.cwd(), 'node_modules', '.bin'))
 
   if(!config.path && config.global)
@@ -61,6 +61,9 @@ module.exports = (function () {
 
   for(var k in config)
     config[toCC(k)] = config[k]
+
+  if(config.showConfig)
+    console.log(JSON.stringify(config, null, 2))
 
   return config
 })()
