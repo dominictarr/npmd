@@ -22,7 +22,7 @@
     "level-sublevel": "~4.7.0",
     "level": "~0.10.0",
     "npmd-resolve": ">=5.2.1 <6",
-    "npmd-install": "~4.1.2",
+    "npmd-install": "~4.2",
     "npmd-tree": "~3.2",
     "npmd-link": "2",
     "strftime": "~0.6.2",
