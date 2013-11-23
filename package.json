@@ -10,7 +10,7 @@
   "dependencies": {
     "npmd-resolve": ">=5.3.1 <6",
     "npmd-install": "~4.2.1",
-    "npmd-tree": "~3.3",
+    "npmd-tree": "~3.3.0",
     "npmd-link": "2",
     "npmd-leaves": "~1.1.0",
     "npmd-bin": "1.2",
@@ -20,7 +20,7 @@
     "level-inverted-index": "~1.2.8",
     "ecstatic": "~0.4.2",
     "level-manifest": "~1.1.1",
-    "semver": "~1.1.4",
+    "semver": "~2.2",
     "padded-semver": "~2.0.4",
     "rc": "~0.3",
     "autonode": "0.3",
