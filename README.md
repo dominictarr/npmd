@@ -42,6 +42,8 @@ this will make running other `npmd` commands much faster.
 npmd will pull down npm metadata, and store it in a leveldb.
 this will be less than 200mb, including a full text index.
 
+Check the [startup_configs](startup_configs/) directory for examples of system startup configurations and instructions on how to set them up.
+
 ## install
 
 install a module. if the module's dependencies are in the cache,
