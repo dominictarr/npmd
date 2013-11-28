@@ -1,5 +1,6 @@
 var deps = require('get-deps')
-var rebuild = require('../plugins/rebuild').rebuild
+var addDeps = require('add-deps')
+var rebuild = require('npmd-rebuild')
 var bin = require('npmd-bin')
 var path = require('path')
 
@@ -17,21 +18,27 @@ exports.commands = function (db, config) {
       install(tree, config, function (err, installed) {
         if(err) return cb(err)
 
-        rebuild(_args[0], config, function (err) {
+        if(config.save || config.saveDev)
+          addDeps(config.path || process.cwd(), installed, config, next)
+        else next()
 
-          _args = _args.map(function (e) {
-            e = e.split('@').shift()
-            if(/^[./]/.test(e)) return e
-            return config.global
-              ? path.join(config.prefix, 'lib', 'node_modules', e)
-              : path.join(process.cwd(), 'node_modules', e)
+        function next () {
+        
+          rebuild(_args[0], config, function (err) {
+
+            _args = _args.map(function (e) {
+              e = e.split('@').shift()
+              if(/^[./]/.test(e)) return e
+              return config.global
+                ? path.join(config.prefix, 'lib', 'node_modules', e)
+                : path.join(process.cwd(), 'node_modules', e)
+            })
+
+            bin.all(_args, config.bin, config, cb)
+
           })
 
-          console.log(_args, config.bin)
-
-          bin.all(_args, config.bin, config, cb)
-
-        })
+        }
       })
 
       //and then build, and link deps
