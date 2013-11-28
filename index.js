@@ -14,8 +14,10 @@ var commands   = require('./options')
 
 var manifest   = require('./manifest.json')
 
-//pull npmconf, so know where to install global modules.
-
+if(config.version) {
+  console.log(require('./package').version)
+  process.exit()
+}
   var db
 
   function createDb (db) {
