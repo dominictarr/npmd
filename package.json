@@ -37,7 +37,8 @@
     "to-camel-case": "~0.2.0",
     "npmconf": "~0.1.5",
     "osenv": "0.0.3",
-    "get-deps": "~2.0.4"
+    "get-deps": "~2.0.4",
+    "npmd-rebuild": "~0.0.0"
   },
   "bin": "./index.js",
   "devDependencies": {
