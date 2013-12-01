@@ -1,4 +1,3 @@
-
 var Inverted = require('level-inverted-index')
 var through  = require('through')
 var strftime = require('strftime')
@@ -95,6 +94,8 @@ exports.commands = function (db) {
   var lines = 1 + (showRank?1:0) + (showReadme?1:0)
 
   var maxResults = config.results || (TTY ? Math.floor((process.stdout.rows-2) / lines) : Number.MAX_VALUE)
+  if(config.results == true)
+  var maxResults = Number.MAX_VALUE
   var i = 0
   db.sublevel('index')
     .createQueryStream(args, {})
@@ -115,17 +116,19 @@ exports.commands = function (db) {
       var authors = data.value.maintainers
         .map(function (s) { return '=' + s.name })
         .join(' ')
+
       var line = rpad(data.key, 22)
         + trim(rpad(data.value.description, 61), 61 - over)
         + trim(rpad(authors, 22), 22 - over)
         + trim(rpad(data.value.time, 18), 18 - over)
         + data.value.keywords.join(' ')
+
       this.queue(highlight(process.stdout.isTTY
         ? line.slice(0, process.stdout.columns)
         : line
       ) + '\n')
 
-      if(data.value.readme)
+      if(data.value.readme && config.showReadme)
       this.queue((function () {
         //make a modue to find the matches.
         //this is really crude, at the moment.
