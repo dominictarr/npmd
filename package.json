@@ -15,7 +15,7 @@
     "npmd-leaves": "~1.1.0",
     "npmd-bin": "1.2",
     "npmd-config": "1",
-    "level-couch-sync": "~1.0.4",
+    "level-couch-sync": "~1.1.1",
     "map-reduce": "4.0",
     "level-inverted-index": "~1.2.8",
     "ecstatic": "~0.4.2",
@@ -38,8 +38,7 @@
     "npmconf": "~0.1.5",
     "osenv": "0.0.3",
     "get-deps": "~2.0.4",
-    "npmd-rebuild": "~0.0.0",
-    "another-progress-bar": "~0.0.3"
+    "npmd-rebuild": "~0.0.0"
   },
   "bin": "./index.js",
   "devDependencies": {
