@@ -38,7 +38,8 @@
     "npmconf": "~0.1.5",
     "osenv": "0.0.3",
     "get-deps": "~2.0.4",
-    "npmd-rebuild": "~0.0.0"
+    "npmd-rebuild": "~0.0.0",
+    "another-progress-bar": "~0.0.3"
   },
   "bin": "./index.js",
   "devDependencies": {
