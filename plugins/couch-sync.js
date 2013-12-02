@@ -1,5 +1,7 @@
 var levelCouchSync = require('level-couch-sync')
 var pad            = require('padded-semver').pad
+var createBar      = require('another-progress-bar')
+var semver         = require('semver')
 
 exports.db = function (db, config) {
   var packageDb = db.sublevel('pkg', {valueEncoding: 'json'})
@@ -8,6 +10,9 @@ exports.db = function (db, config) {
   //if a date is missing, use this number.
   var yearZero = new Date(2009, 1, 1)
 
+  if(config._[0] === 'sync')
+    config.sync = true
+
   if(!(config && config.sync))
     return db.sublevel('registry-sync')
 
@@ -15,8 +20,8 @@ exports.db = function (db, config) {
   var registrySync
   if(config.sync !== false) {
 
-    registrySync = 
-    levelCouchSync(config.registry, db, 'registry-sync', 
+    registrySync = db.sublevel('registry-sync')
+    levelCouchSync(config.registry, db, registrySync,
     function (data, emit) {
       var doc = data.doc
 
@@ -83,19 +88,19 @@ exports.db = function (db, config) {
 
   }
 
-  if(config.debug)
-    registrySync.on('progress', function (ratio) {
-      var percentage = Math.floor(ratio*10000)/100
-      if (percentage > lastPercentage) {
-        console.error(percentage)
-        lastPercentage = percentage
-      }
-    })
 }
 
 exports.cli = function (db) {
   db.cli.push(function (db, config, cb) {
     if(!config.sync) return
+    console.log('syncing...')
+    var registrySync = 
+      db.sublevel('registry-sync')
+
+    var whitespace = ''
+
+    for(var i = 0; i < process.stdout.colums; i++)
+      whitespace += ' '
 
     if(config.verbose)
       db.sublevel('pkg').post(function (op) {
@@ -104,11 +109,30 @@ exports.cli = function (db) {
         var maintainers = pkg.maintainers.map(function (e) {
           return e.name
         }).join(', ')
-        console.log(pkg.name, maintainers, pkg.time.modified)
+        console.log(pkg.name)
         if(pkg.description)
           console.log(pkg.description)
       })
-
+    else {
+      var bar = createBar('syncing with npm registry...')
+      registrySync
+      .on('progress', function (ratio) {
+        bar.progress(Math.floor(ratio*10000)/100, 100)
+      })
+      .on('data', function (data) {
+        var doc = data.doc
+        if(!doc.versions) return
+        var max = process.stdout.columns
+        var str = (function () { try {
+            var s = doc.name + '@' + semver.maxSatisfying(Object.keys(doc.versions), '*', true) + ': '
+            var desc = doc.description || '[no description]'
+            var len = s.length + desc.length
+            return len > max ? s + desc.substring(0, max - s.length) : s + desc
+          } catch (err) { console.error(err.message) }
+        }())
+        bar.label(str)
+      })
+    }
     return true
   })
 }
