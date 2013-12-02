@@ -8,9 +8,9 @@
     "url": "git://github.com/dominictarr/npmd.git"
   },
   "dependencies": {
-    "npmd-resolve": ">=5.3.1 <6",
+    "npmd-resolve": "~5.4.1",
     "npmd-install": "~4.2.3",
-    "npmd-tree": "~3.3.0",
+    "npmd-tree": "~3.3.4",
     "npmd-link": "2",
     "npmd-leaves": "~1.1.0",
     "npmd-bin": "1.2",
@@ -38,7 +38,7 @@
     "npmconf": "~0.1.5",
     "osenv": "0.0.3",
     "get-deps": "~2.0.4",
-    "npmd-rebuild": "~0.0.0"
+    "npmd-rebuild": "~0.0.1"
   },
   "bin": "./index.js",
   "devDependencies": {
