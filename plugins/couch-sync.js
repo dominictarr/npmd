@@ -1,6 +1,5 @@
 var levelCouchSync = require('level-couch-sync')
 var pad            = require('padded-semver').pad
-var createBar      = require('another-progress-bar')
 var semver         = require('semver')
 
 exports.db = function (db, config) {
