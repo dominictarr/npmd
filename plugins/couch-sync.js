@@ -109,28 +109,25 @@ exports.cli = function (db) {
         var maintainers = pkg.maintainers.map(function (e) {
           return e.name
         }).join(', ')
+        
         console.log(pkg.name)
         if(pkg.description)
-          console.log(pkg.description)
+          console.log('  '+pkg.description)
       })
     else {
-      var bar = createBar('syncing with npm registry...')
-      registrySync
-      .on('progress', function (ratio) {
-        bar.progress(Math.floor(ratio*10000)/100, 100)
-      })
-      .on('data', function (data) {
+      registrySync.createProgressBar('npm registry', function (data) {
         var doc = data.doc
         if(!doc.versions) return
         var max = process.stdout.columns
-        var str = (function () { try {
-            var s = doc.name + '@' + semver.maxSatisfying(Object.keys(doc.versions), '*', true) + ': '
-            var desc = doc.description || '[no description]'
-            var len = s.length + desc.length
-            return len > max ? s + desc.substring(0, max - s.length) : s + desc
-          } catch (err) { console.error(err.message) }
-        }())
-        bar.label(str)
+        try {
+          var s = doc.name + '@' + semver.maxSatisfying(Object.keys(doc.versions), '*', true) + ': '
+          var desc = doc.description || '[no description]'
+          var len = s.length + desc.length
+          return len > max ? s + desc.substring(0, max - s.length) : s + desc
+        } catch (err) {
+          console.error(err.message)
+        }
+        
       })
     }
     return true
