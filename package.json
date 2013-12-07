@@ -27,7 +27,7 @@
     "multilevel": "~4.1.0",
     "through": "~2.3.4",
     "level-sublevel": "~4.7.0",
-    "level": "~0.10.0",
+    "level": "~0.18.0",
     "strftime": "~0.6.2",
     "npm-registry-client": "~0.2.29",
     "search-context": "~0.0.4",
