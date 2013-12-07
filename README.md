@@ -9,7 +9,7 @@ But it is still faster if you live in california too.
 
 ## how
 
-`npmd` is based on the idea of eagre replication.
+`npmd` is based on the idea of eager replication.
 All the npm metadata (package.json + readmes) are stored locally in leveldb.
 (currently, with 44k modules this is about 260 mb)
 when you type `npmd install foo <enter>` npmd resolves all the dependencies
