@@ -42,6 +42,7 @@ if(config.version) {
     require('./plugins/help'),
     require('./plugins/add'),
     require('./plugins/rebuild'),
+    require('./plugins/show'),
     {commands: function (db) {
       db.commands.push(function (db, config, cb) {
           fs.createReadStream(__dirname + '/docs/usage.md')
