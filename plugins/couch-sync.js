@@ -113,6 +113,19 @@ exports.cli = function (db) {
         if(pkg.description)
           console.log('  '+pkg.description)
       })
+    else if (config.debug) {
+
+     ;['backoff', 'ready',  'data',    'progress',
+       'max',     'wait',   'timeout', 'retry',
+       'confirm', 'confirm_request']
+      .forEach(function (name) {
+        registrySync.on(name, function () {
+          var args = [].slice.call(arguments)
+          args.unshift(name)
+          console.log.apply(console, args)
+        })
+      })
+    }
     else {
       registrySync.createProgressBar('npm registry', function (data) {
         var doc = data.doc
