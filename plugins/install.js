@@ -40,8 +40,6 @@ exports.commands = function (db, config) {
 
         }
       })
-
-      //and then build, and link deps
     })
     return true
   })
