@@ -23,7 +23,7 @@ exports.db = function (db, config) {
     levelCouchSync(config.registry, db, registrySync,
     function (data, emit) {
       var doc = data.doc
-
+      if(!doc) return
       if(doc._deleted) return
       //ignore broken modules
       if(!doc._attachments) return
