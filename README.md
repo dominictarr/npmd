@@ -18,6 +18,9 @@ This is much faster than using npm, especially if you have a high latency intern
 
 A local database also enables `npmd` to provide offline search, and indexes all readmes.
 
+When you actually install a module, that tarball is cached for next time you install it that version.
+(regular npm does this also).
+
 ## help
 
 display help files
