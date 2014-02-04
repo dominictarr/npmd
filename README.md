@@ -36,10 +36,10 @@ When this gets near 100% you can use the other commands.
 
 ```
 npm install npmd -g
-npmd --sync
+npmd sync
 ```
 
-You should leave the `npmd` service running in the background,
+You should leave the `npmd sync` service running in the background,
 this will make running other `npmd` commands much faster.
 
 npmd will pull down npm metadata, and store it in a leveldb.
