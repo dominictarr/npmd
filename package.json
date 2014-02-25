@@ -16,7 +16,7 @@
     "npmd-bin": "1.2",
     "npmd-config": "~1.0.10",
     "npmd-rebuild": "~0.1.0",
-    "level-couch-sync": "~1.1.1",
+    "level-couch-sync": "~1.2.0",
     "map-reduce": "4.0",
     "level-inverted-index": "~1.2.8",
     "ecstatic": "~0.4.2",
