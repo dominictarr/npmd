@@ -74,29 +74,34 @@ exports.commands = function (db) {
     return context.highlight(
       string, args,
       function (e) {
-        return TTY ? e.bold : '*' + e +'*'
+        return TTY ? e.yellow : '*' + e +'*'
       }
     )
   }
 
+  function style(str, style) {
+    if(!TTY) return str
+    else return str[style]
+  }
 
   var header = rpad('NAME', 22)
     + rpad('DESCRIPTION', 61)
     + rpad('AUTHOR', 22)
     + rpad('DATE', 18)
 
-  if (TTY) header = header.slice(0, process.stdout.columns)
+  if (TTY) header = header.slice(0, process.stdout.columns).bold
   process.stdout.write(header + '\n')
 
-  var showRank = config['show-rank'] === true
-  var showReadme = config['show-readme'] !== false
+  var showRank = config.showRank === true
+  var showReadme = config.showReadme !== false
 
   var lines = 1 + (showRank?1:0) + (showReadme?1:0)
 
-  var maxResults = config.results || (TTY ? Math.floor((process.stdout.rows-2) / lines) : Number.MAX_VALUE)
+  var maxResults = config.results || (TTY ? Math.floor((process.stdout.rows-3) / lines) : Number.MAX_VALUE)
   if(config.results == true)
-  var maxResults = Number.MAX_VALUE
+    maxResults = Number.MAX_VALUE
   var i = 0
+
   db.sublevel('index')
     .createQueryStream(args, {})
     .pipe(through(function (e) {
@@ -117,25 +122,28 @@ exports.commands = function (db) {
         .map(function (s) { return '=' + s.name })
         .join(' ')
 
-      var line = rpad(data.key, 22)
+      var l = (config.context || (TTY ? process.stdout.columns : 80))
+
+      var line = style((rpad(data.key, 22)
         + trim(rpad(data.value.description, 61), 61 - over)
         + trim(rpad(authors, 22), 22 - over)
         + trim(rpad(data.value.time, 18), 18 - over)
-        + data.value.keywords.join(' ')
+        + data.value.keywords.join(' ')).substring(0, l), 'bold')
 
-      this.queue(highlight(process.stdout.isTTY
-        ? line.slice(0, process.stdout.columns)
-        : line
+      this.queue(highlight(line
+//        process.stdout.isTTY
+  //      ? line.slice(0, process.stdout.columns)
+    //    : line
       ) + '\n')
 
-      if(data.value.readme && config.showReadme)
+      if(data.value.readme && showReadme)
       this.queue((function () {
         //make a modue to find the matches.
         //this is really crude, at the moment.
+        var l = (config.context || (TTY ? process.stdout.columns - 10 : 70))
   
-        var l = (config.context || (process.stdout.isTTY ? process.stdout.columns - 10 : 70))
 
-        var m = 
+        var m =
           context.context(data.value.readme, data.value.stats.group, args, l)
 
         return '    ...'+ highlight(
@@ -146,7 +154,7 @@ exports.commands = function (db) {
         ) + '...\n'
         //option to show the search rank.
         //useful when tuning search ranking
-        + (config['show-rank'] ? 'rank=' + data.value.rank + '\n' : '')
+        + (showRank ? 'rank=' + data.value.rank + '\n' : '')
       })() || '')
 
     }))
