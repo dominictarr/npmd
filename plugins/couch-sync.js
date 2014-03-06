@@ -6,6 +6,8 @@ exports.db = function (db, config) {
   var packageDb = db.sublevel('pkg', {valueEncoding: 'json'})
   var versionDb = db.sublevel('ver', {valueEncoding: 'json'})
 
+  var syncRegistryUrl = config.syncRegistryUrl || 'https://skimdb.npmjs.com/registry'
+
   //if a date is missing, use this number.
   var yearZero = new Date(2009, 1, 1)
 
@@ -20,14 +22,12 @@ exports.db = function (db, config) {
   if(config.sync !== false) {
 
     registrySync = db.sublevel('registry-sync')
-    levelCouchSync(config.registry, db, registrySync,
+    levelCouchSync(syncRegistryUrl, db, registrySync,
     function (data, emit) {
       var doc = data.doc
       if(!doc) return
       if(doc._deleted) return
-      //ignore broken modules
-      if(!doc._attachments) return
-
+      
       //don't allow keys with ~
       if(/~/.test(data.id)) return
 
@@ -37,7 +37,6 @@ exports.db = function (db, config) {
         return
 
       try {
-
         //set time to something sensible by default.
         var time = doc.time ? {
             created  : doc.time.created,
@@ -65,18 +64,16 @@ exports.db = function (db, config) {
         for(var version in vers) {
           var ver = vers[version]
           var tgz = doc.name + '-' + version + '.tgz'
-          if(doc._attachments[tgz])
-            emit(data.id + '!' + pad(version), {
-              name            : ver.name,
-              version         : ver.version,
-              dependencies    : ver.dependencies,
-              devDependencies : ver.devDependencies,
-              description     : ver.description,
-              size            : doc._attachments[tgz].length,
-              time            : doc.time ? doc.time[version] : yearZero,
-              shasum          : ver.dist.shasum,
-              gypfile         : ver.gypfile
-            }, versionDb)
+          emit(data.id + '!' + pad(version), {
+            name            : ver.name,
+            version         : ver.version,
+            dependencies    : ver.dependencies,
+            devDependencies : ver.devDependencies,
+            description     : ver.description,
+            time            : doc.time ? doc.time[version] : yearZero,
+            shasum          : ver.dist.shasum,
+            gypfile         : ver.gypfile
+          }, versionDb)
 
         }
       } catch (err) {
