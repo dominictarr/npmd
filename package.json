@@ -9,30 +9,15 @@
   },
   "dependencies": {
     "npmd-resolve": "~5.4.2",
-    "npmd-install": "~4.2.5",
+    "npmd-install": "~5.0.3",
     "npmd-tree": "~3.3.4",
-    "npmd-link": "2",
-    "npmd-leaves": "~1.1.0",
     "npmd-bin": "1.2",
     "npmd-config": "~1.0.10",
     "npmd-rebuild": "~0.1.0",
-    "level-couch-sync": "~1.2.0",
-    "map-reduce": "4.0",
-    "level-inverted-index": "~1.2.8",
-    "ecstatic": "~0.4.2",
-    "level-manifest": "~1.1.1",
     "semver": "~2.2",
-    "padded-semver": "~2.0.4",
     "rc": "~0.3",
-    "autonode": "0.3",
-    "multilevel": "~4.1.0",
     "through": "~2.3.4",
-    "level-sublevel": "~4.7.0",
-    "level": "~0.18.0",
     "strftime": "~0.6.2",
-    "npm-registry-client": "~0.2.29",
-    "search-context": "~0.0.4",
-    "sort-stream": "~1.0.0",
     "add-deps": "~1.2.0",
     "optimist": "~0.6.0",
     "to-camel-case": "~0.2.0",
@@ -43,12 +28,12 @@
     "pull-stream": "~2.20.1",
     "content-addressable-store": "~1.0.1",
     "pull-glob": "~1.0.1",
-    "pull-paramap": "~1.0.4"
+    "pull-paramap": "~1.0.4",
+    "levelup": "~0.18.2",
+    "locket": "git://github.com/bigeasy/locket",
+    "npmd-cache": "~3.1.2"
   },
   "bin": "./index.js",
-  "devDependencies": {
-    "memwatch": "~0.2.2"
-  },
   "scripts": {
     "test": "set -e; for t in test/*.js; do node $t; done",
     "build": "browserify client.js > static/bundle.js"
