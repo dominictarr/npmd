@@ -43,7 +43,6 @@ exports.cli = function (db, cache) {
       db.resolve(args, config,
         function (err, tree) {
           if(err) return cb(err)
-          console.log(JSON.stringify(tree, null, 2))
           cb(null, tree)
       })
   
