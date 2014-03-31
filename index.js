@@ -5,7 +5,15 @@ var path       = require('path')
 
 //var autonode   = require('autonode')
 //var multilevel = require('multilevel')
-var locket     = require('locket')
+
+var leveldown
+
+try {
+  leveldown = require('leveldown')
+} catch (err) {
+  leveldown = require('locket')
+}
+
 var levelup    = require('levelup')
 
 //var levelup    = require('level')
@@ -28,7 +36,7 @@ var db, cache
 function createDb (db) {
   if(!db) db = levelup(
                 path.join(config.dbPath, 'db'), 
-                {encoding: 'json', db: locket}
+                {encoding: 'json', db: leveldown}
               )
   db.methods = {}
   cache = createCache(db, config)
