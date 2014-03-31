@@ -8,8 +8,9 @@
     "url": "git://github.com/dominictarr/npmd.git"
   },
   "dependencies": {
-    "npmd-resolve": "^7.0.0",
+    "npmd-resolve": "^7.0.1",
     "npmd-install": "~5.0.3",
+    "npmd-cache": "~3.1.2",
     "npmd-tree": "~3.3.4",
     "npmd-bin": "1.2",
     "npmd-config": "~1.0.10",
@@ -30,8 +31,7 @@
     "pull-glob": "~1.0.1",
     "pull-paramap": "~1.0.4",
     "levelup": "~0.18.2",
-    "locket": "git://github.com/bigeasy/locket",
-    "npmd-cache": "~3.1.2"
+    "locket": "git://github.com/bigeasy/locket"
   },
   "optionalDependencies": {
     "leveldown": "~0.10.2"
