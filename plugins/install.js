@@ -19,7 +19,7 @@ exports.commands = function (db, cache, config) {
       if(err) return cb(err)
       install(tree, config, function (err, installed) {
         if(err) return cb(err)
-        return console.log(installed)
+
         if(config.save || config.saveDev)
           addDeps(config.path || process.cwd(), installed, config, next)
         else next()
@@ -36,7 +36,9 @@ exports.commands = function (db, cache, config) {
                 : path.join(process.cwd(), 'node_modules', e)
             })
 
-            bin.all(_args, config.bin, config, cb)
+            bin.all(_args, config.bin, config, function (err) {
+              cb(err, installed)
+            })
 
           })
 
