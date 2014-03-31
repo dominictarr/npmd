@@ -3,8 +3,9 @@ var ls      = require('npmd-tree').ls
 var createResolve = require('npmd-resolve')
 var deps    = require('get-deps')
 
-exports.db = function (db, config) {
-  var resolve = createResolve(db.sublevel('ver'), config)
+exports.db = function (db, cache, config) {
+
+  var resolve = createResolve(null, cache, config)
   db.methods.resolve = {type: 'async'}
   db.resolve = function (module, opts, cb) {
     if(!cb) cb = opts, opts = {}
@@ -33,8 +34,8 @@ function merge (a, b) {
   return a
 }
 
-exports.cli = function (db) {
-  db.commands.push(function (db, config, cb) {
+exports.cli = function (db, cache) {
+  db.commands.push(function (db, cache, config, cb) {
     var args = config._.slice()
     var cmd = args.shift()
     

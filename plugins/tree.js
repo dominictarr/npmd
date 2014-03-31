@@ -1,7 +1,7 @@
 var tree = require('npmd-tree')
 
 exports.cli = function (db) {
-  db.commands.push(function (db, config, cb) {
+  db.commands.push(function (db, cache, config, cb) {
     var args = config._.slice()
     var cmd = args.shift()
   

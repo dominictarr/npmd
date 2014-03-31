@@ -4,10 +4,12 @@ var rebuild = require('npmd-rebuild')
 var bin = require('npmd-bin')
 var path = require('path')
 
-exports.commands = function (db, config) {
+exports.commands = function (db, cache, config) {
 
-  var install = require('npmd-install')
-  db.commands.push(function (db, config, cb) {
+  if(!cache.get) throw new Error('must have cache')
+  var install = require('npmd-install')(cache)
+
+  db.commands.push(function (db, cache, config, cb) {
     var args = config._.slice()
     if('install' !== args.shift()) return
 
@@ -17,7 +19,7 @@ exports.commands = function (db, config) {
       if(err) return cb(err)
       install(tree, config, function (err, installed) {
         if(err) return cb(err)
-
+        return console.log(installed)
         if(config.save || config.saveDev)
           addDeps(config.path || process.cwd(), installed, config, next)
         else next()
