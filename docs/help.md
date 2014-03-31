@@ -7,4 +7,6 @@ npmd install [module(@version)?,...]    # install modules
 npmd resolve [module(@version)?,...]    # output dependency tree for install
   --greedy?
 
+npmd tree                               # view current dependency tree
+
 npmd help                               # display this message

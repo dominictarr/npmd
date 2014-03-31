@@ -8,15 +8,13 @@ exports.cli = function (db) {
     if(cmd == 'tree') {
       tree.tree(config.installPath, config, function (err, tree) {
         if(err) throw err
-        console.log(JSON.stringify(tree, null, 2))
-        cb()
+        cb(null, tree)
       })
     }
     else if(cmd == 'ls')
       tree.ls(config.installPath, function (err, tree) {
         if(err) throw err
-        console.log(JSON.stringify(tree, null, 2))
-        cb()
+        cb(null, tree)
       })
     else
       return
