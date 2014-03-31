@@ -28,7 +28,7 @@ var db, cache
 function createDb (db) {
   if(!db) db = levelup(
                 path.join(config.dbPath, 'db'), 
-                {db: locket, encoding: 'json'}
+                {encoding: 'json', db: locket}
               )
   db.methods = {}
   cache = createCache(db, config)
@@ -126,19 +126,20 @@ function createDb (db) {
     addDb(db, cache, config)
     addCommands(db, cache, config)
 
-    var manifest = Manifest(db, true)
+//    var manifest = Manifest(db, true)
 
-    if(config.manifest) {
-      fs.writeFileSync(
-        __dirname+'/manifest.json',
-        JSON.stringify(manifest, null, 2)
-      )
-      console.log('updated manifest.json')
-      process.exit(0)
-    }
+//    if(config.manifest) {
+//      fs.writeFileSync(
+//        __dirname+'/manifest.json',
+//        JSON.stringify(manifest, null, 2)
+//      )
+//      console.log('updated manifest.json')
+//      process.exit(0)
+//    }
 
     execCommands(db, config, function (err, data) {
       if(err) throw err
+      console.log(JSON.stringify(data, null, 2))
       process.exit()
     })
 //  })
