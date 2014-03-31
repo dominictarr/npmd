@@ -6,14 +6,6 @@ var path       = require('path')
 //var autonode   = require('autonode')
 //var multilevel = require('multilevel')
 
-var leveldown
-
-try {
-  leveldown = require('leveldown')
-} catch (err) {
-  leveldown = require('locket')
-}
-
 var levelup    = require('levelup')
 
 //var levelup    = require('level')
@@ -31,11 +23,22 @@ if(config.version) {
   process.exit()
 }
 
+var leveldown
+if(config.jsdb) 
+  leveldown = require('locket')
+else
+  try {
+    leveldown = require('leveldown')
+  } catch (err) {
+    config.jsdb = true
+    leveldown = require('locket')
+  }
+
 var db, cache
 
 function createDb (db) {
   if(!db) db = levelup(
-                path.join(config.dbPath, 'db'), 
+                path.join(config.dbPath, config.jsdb ? 'jsdb' : 'db'),
                 {encoding: 'json', db: leveldown}
               )
   db.methods = {}
