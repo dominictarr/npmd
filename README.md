@@ -7,6 +7,14 @@ improve performance by eliminating unnecessary network round-trips.
 It is intended for use in the antipodes, via 3g, in airplanes, submarines, up trees, and in caves.
 But it is still faster if you live in california too.
 
+## install
+
+install carefully.
+
+``` js
+npm install npmd@1 -g --carefully
+```
+
 ## npmd@1
 
 I've recently rewritten the heart of npmd,
