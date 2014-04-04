@@ -1,9 +1,9 @@
 
 var rebuild = require('npmd-rebuild')
 
-exports.commands = function (db, config) {
+exports.commands = function (db, cache, config) {
 
-  db.commands.push(function (db, config, cb) {
+  db.commands.push(function (db, cache, config, cb) {
 
     if(config._[0] !== 'rebuild') return
 
