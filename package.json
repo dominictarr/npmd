@@ -8,9 +8,9 @@
     "url": "git://github.com/dominictarr/npmd.git"
   },
   "dependencies": {
-    "npmd-resolve": "^7.0.1",
+    "npmd-resolve": "^7.1.0",
     "npmd-install": "^5.0.8",
-    "npmd-cache": "3.2.2",
+    "npmd-cache": "3.2.3",
     "npmd-tree": "~3.3.4",
     "npmd-bin": "1.2",
     "npmd-config": "~1.0.11",
