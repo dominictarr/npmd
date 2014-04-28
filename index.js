@@ -23,16 +23,7 @@ if(config.version) {
   process.exit()
 }
 
-var leveldown
-if(config.jsdb) 
-  leveldown = require('locket')
-else
-  try {
-    leveldown = require('leveldown')
-  } catch (err) {
-    config.jsdb = true
-    leveldown = require('locket')
-  }
+var leveldown = require('leveldown')
 
 var db, cache
 
