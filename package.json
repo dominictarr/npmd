@@ -31,9 +31,6 @@
     "pull-glob": "~1.0.1",
     "pull-paramap": "~1.0.4",
     "levelup": "~0.18.2",
-    "locket": "git://github.com/bigeasy/locket"
-  },
-  "optionalDependencies": {
     "leveldown": "~0.10.2"
   },
   "bin": "./index.js",
