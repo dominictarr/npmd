@@ -13,10 +13,18 @@ exports.commands = function (db, cache, config) {
     var args = config._.slice()
     if('install' !== args.shift()) return
 
-    var _args = args.slice()
+    var _args = args.slice(), data = ''
+    if(!process.stdin.isTTY)
+      process.stdin
+        .on('data', function (d) { data += d })
+        .on('end', function () { doInstall(JSON.parse(data)) })
+    else
+      db.resolve(args.slice(), config, function (err, tree) {
+        if(err) return cb(err)
+        doInstall(tree)
+      })
 
-    db.resolve(args.slice(), config, function (err, tree) {
-      if(err) return cb(err)
+    function doInstall (tree) {
       install(tree, config, function (err, installed) {
         if(err) return cb(err)
 
@@ -44,7 +52,9 @@ exports.commands = function (db, cache, config) {
 
         }
       })
-    })
+    }
+
+
     return true
   })
 }
