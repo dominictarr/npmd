@@ -8,12 +8,12 @@
     "url": "git://github.com/dominictarr/npmd.git"
   },
   "dependencies": {
-    "npmd-resolve": "~7.4.1",
+    "npmd-resolve": "~7.5.0",
     "npmd-install": "^5.0.8",
-    "npmd-cache": "~4.0.3",
+    "npmd-cache": "~4.1.0",
     "npmd-tree": "~3.3.4",
     "npmd-bin": "1.2",
-    "npmd-config": "~1.0.11",
+    "npmd-config": "~1.1.0",
     "npmd-rebuild": "~0.1.0",
     "semver": "~2.2",
     "rc": "~0.3",
