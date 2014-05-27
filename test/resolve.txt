@@ -5,3 +5,6 @@ npmd@1
 npm@1.4.0
 request@2
 component@1
+grunt@0.4.1
+options@latest
+ws@0.4.25 
