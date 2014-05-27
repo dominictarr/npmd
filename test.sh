@@ -1,4 +1,4 @@
-#! /usr/bin/bash
+#! /bin/bash
 
 set -e
 NPMD="$PWD"/index.js
