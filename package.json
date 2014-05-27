@@ -36,7 +36,7 @@
   },
   "bin": "./index.js",
   "scripts": {
-    "test": "set -e; for t in test/*.js; do node $t; done",
+    "test": "./test.sh",
     "build": "browserify client.js > static/bundle.js"
   },
   "author": "Dominic Tarr <dominic.tarr@gmail.com> (http://dominictarr.com)",

@@ -1,0 +1,7 @@
+mkdirp@0
+browserify@3
+mocha@>=1.6.2 && <2
+npmd@1
+npm@1.4.0
+request@2
+component@1
