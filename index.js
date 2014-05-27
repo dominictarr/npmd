@@ -2,6 +2,7 @@
 
 var fs         = require('fs')
 var path       = require('path')
+var mkdirp     = require('mkdirp')
 
 //var autonode   = require('autonode')
 //var multilevel = require('multilevel')
@@ -27,14 +28,22 @@ var leveldown = require('leveldown')
 
 var db, cache
 
-function createDb (db) {
-  if(!db) db = levelup(
-                path.join(config.dbPath, config.jsdb ? 'jsdb' : 'db'),
-                {encoding: 'json', db: leveldown}
-              )
-  db.methods = {}
-  cache = createCache(db, config)
-  return db
+function createDb (cb) {
+  levelup(
+    path.join(config.dbPath, config.jsdb ? 'jsdb' : 'db'),
+    {encoding: 'json', db: leveldown},
+    function (err, db) {
+      if(err && /No such file or directory/.test(err.message))
+        return mkdirp(config.dbPath, function (err) {
+          if(err) return cb(err)
+          createDb(cb)
+        })
+      if(err) return cb(err)
+      db.methods = {}
+      cache = createCache(db, config)
+      cb(null, db)
+    }
+  )
 }
 
   var plugins = [
@@ -121,12 +130,13 @@ function createDb (db) {
 //  })
 //  .listen(config.port)
 //  .on('listening', function () {
-    db = createDb()
+    createDb(function(err, db){
+      if(err) throw err
 
-    //attach all plugins.
-    //process any commands.
-    addDb(db, cache, config)
-    addCommands(db, cache, config)
+      //attach all plugins.
+      //process any commands.
+      addDb(db, cache, config)
+      addCommands(db, cache, config)
 
 //    var manifest = Manifest(db, true)
 
@@ -139,10 +149,12 @@ function createDb (db) {
 //      process.exit(0)
 //    }
 
-    execCommands(db, config, function (err, data) {
-      if(err) throw err
-      console.log(JSON.stringify(data, null, 2))
-      process.exit()
-    })
+      execCommands(db, config, function (err, data) {
+        if(err) throw err
+        console.log(JSON.stringify(data, null, 2))
+        process.exit()
+      })
 //  })
-//
+
+    })
+
