@@ -8,8 +8,8 @@
     "url": "git://github.com/dominictarr/npmd.git"
   },
   "dependencies": {
-    "npmd-resolve": "~7.5.1",
-    "npmd-install": "^5.0.8",
+    "npmd-resolve": "~7.5.2",
+    "npmd-install": "~5.0.8",
     "npmd-cache": "~4.1.0",
     "npmd-tree": "~3.3.4",
     "npmd-bin": "1.2",
