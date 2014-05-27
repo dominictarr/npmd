@@ -1,13 +1,16 @@
 #! /usr/bin/bash
 
+set -e
+NPMD="$PWD"/index.js
 
 resolve () {
   echo resolving...
+  cd $HOME
   while read r;
   do
     echo resolve "$r"
-    time ./index.js resolve "$r"
-    time ./index.js "$r" --greedy
+    time $NPMD resolve "$r"
+    time $NPMD resolve "$r" --greedy
     echo
   done
 }
