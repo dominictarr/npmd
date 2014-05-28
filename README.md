@@ -2,6 +2,9 @@
 
 distributed npm client.
 
+[![build status](https://secure.travis-ci.org/dominictarr/npmd.svg)](http://travis-ci.org/dominictarr/npmd)
+
+
 `npmd` is an alternative npm client that uses local replication and smart caching
 improve performance by eliminating unnecessary network round-trips.
 It is intended for use in the antipodes, via 3g, in airplanes, submarines, up trees, and in caves.
