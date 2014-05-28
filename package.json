@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "npmd-resolve": "~7.5.2",
-    "npmd-install": "~5.0.8",
+    "npmd-install": "~5.0.10",
     "npmd-cache": "~4.1.0",
     "npmd-tree": "~3.3.4",
     "npmd-bin": "1.2",
