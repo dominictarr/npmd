@@ -7,6 +7,9 @@
     "type": "git",
     "url": "git://github.com/dominictarr/npmd.git"
   },
+  "bugs": {
+    "url": "https://github.com/dominictarr/npmd/issues"
+  },
   "dependencies": {
     "npmd-resolve": "~7.5.2",
     "npmd-install": "~5.0.10",
