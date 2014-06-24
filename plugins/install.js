@@ -1,6 +1,6 @@
 var deps = require('get-deps')
 var addDeps = require('add-deps')
-var rebuild = require('npmd-rebuild')
+var build = require('npmd-build')
 var bin = require('npmd-bin')
 var path = require('path')
 
@@ -34,7 +34,7 @@ exports.commands = function (db, cache, config) {
 
         function next () {
         
-          rebuild(_args[0], config, function (err) {
+          build(_args[0], config, function (err) {
 
             _args = _args.map(function (e) {
               e = e.split('@').shift()
