@@ -62,7 +62,7 @@ function createDb (cb) {
 //    require('./plugins/dependents'),
     require('./plugins/help'),
 //    require('./plugins/add'),
-    require('./plugins/rebuild'),
+    require('./plugins/build'),
 //    require('./plugins/show'),
     {commands: function (db) {
       db.commands.push(function (db, cache, config, cb) {
