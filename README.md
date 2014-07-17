@@ -18,6 +18,17 @@ install carefully.
 npm install npmd@1 -g --carefully
 ```
 
+## jokes
+
+npmd may contain some jokes. If you do not have precious time
+to waste with jokes, you may disable them by setting the
+`npmd_jokes=0` enviroment variable, or passing `--no-jokes`
+on the command line or setting `"jokes": false` in the `~/.npmd/config`
+file. See [rc](https://github.com/dominictarr/rc) documentation for
+how to pass any configuration setting.
+
+Note: disabling jokes also disables careful mode.
+
 ## npmd@1
 
 I've recently rewritten the heart of npmd,
