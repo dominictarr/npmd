@@ -4,7 +4,9 @@ mocha@>=1.6.2 && <2
 npmd@1
 npm@1.4.0
 request@2
-component@1
 grunt@0.4.1
 options@latest
-ws@0.4.25 
+ws@0.4.25
+express@ae5ee7dfbe436192adad65c7817c5ae78a8b4f93
+component@1
+
