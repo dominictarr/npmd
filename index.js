@@ -47,23 +47,11 @@ function createDb (cb) {
 }
 
   var plugins = [
-//    require('./plugins/couch-sync'),
-//    require('./plugins/inverted-index'),
-//    require('./plugins/publish'),
-//    require('./plugins/authors'),
     require('./plugins/resolve'),
     require('./plugins/tree'),
-//    require('./plugins/leaves'),
-//    require('./plugins/link'),
     require('./plugins/install'),
-//    require('./plugins/versions'),
-//    require('./plugins/packages'),
-//    require('./plugins/readme'),
-//    require('./plugins/dependents'),
     require('./plugins/help'),
-//    require('./plugins/add'),
     require('./plugins/build'),
-//    require('./plugins/show'),
     {commands: function (db) {
       db.commands.push(function (db, cache, config, cb) {
           fs.createReadStream(__dirname + '/docs/usage.md')
