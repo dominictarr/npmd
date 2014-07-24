@@ -152,7 +152,9 @@ function createDb (cb) {
       execCommands(db, config, function (err, data) {
         if(err) throw err
         console.log(JSON.stringify(data, null, 2))
-        process.exit()
+        db.close(function () {
+          process.exit()
+        })
       })
 //  })
 
