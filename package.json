@@ -14,6 +14,7 @@
     "npmd-resolve": "~7.7.1",
     "npmd-install": "~5.1.2",
     "npmd-cache": "~4.3.1",
+    "npmd-config": "~1.2.2",
     "npmd-tree": "~3.3.4",
     "npmd-bin": "1.2",
     "npmd-build": "~0.1.3",
