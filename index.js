@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+'use strict'
+
 var fs         = require('fs')
 var path       = require('path')
 var mkdirp     = require('mkdirp')
@@ -15,14 +17,14 @@ if(config.version) {
   process.exit()
 }
 
-var leveldown = require('leveldown')
+var medeadown = require('medeadown')
 
 var db, cache
 
 function createDb (cb) {
   levelup(
     path.join(config.dbPath, config.jsdb ? 'jsdb' : 'db'),
-    {encoding: 'json', db: leveldown},
+    {encoding: 'json', db: medeadown},
     function (err, db) {
       if(err && /No such file or directory/.test(err.message))
         return mkdirp(config.dbPath, function (err) {
