@@ -48,7 +48,7 @@ npmd keeps a cache of modules you have installed, but it works different to npm'
 
 npm keeps a cache of modules at versions, see `~/.npm/{module}/{version}` and of npm docs
 that npm has downloaded `~/.npm/{module}/.cache.json`. Unfortunately, this does not work well
-offline, because it does not cache modules that where installed via `git` or `http` urls.
+offline, because it does not cache modules that were installed via `git` or `http` urls.
 (any module with a largish dependency tree is likely to have at least one of these)
 
 npmd-cache works differently, it's cache is divided into two parts - the mutable side,
