@@ -93,7 +93,8 @@ createDb(function(err, db){
 
   execCommands(db, config, function (err, data) {
     if(err) throw err
-    console.log(JSON.stringify(data, null, 2))
+    if(data)
+      console.log(JSON.stringify(data, null, 2))
     process.exit()
   })
 })
