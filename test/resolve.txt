@@ -1,5 +1,6 @@
 mkdirp@0
 browserify@3
+browserify@4
 mocha@>=1.6.2 && <2
 npmd@1
 npm@1.4.0
