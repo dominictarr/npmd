@@ -11,7 +11,7 @@
     "url": "https://github.com/dominictarr/npmd/issues"
   },
   "dependencies": {
-    "npmd-resolve": "~7.7.1",
+    "npmd-resolve": "~7.8.0",
     "npmd-install": "~5.1.2",
     "npmd-cache": "~4.3.1",
     "npmd-config": "~1.2.2",
